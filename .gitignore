@@ -1,0 +1,14 @@
+S generated files #
+######################
+.DS_Store
+sandbox/*
+docxs/*
+*.*~
+*.dbg
+*.pyc
+*.swp
+*.json
+*.txt
+
+
+

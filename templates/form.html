@@ -14,46 +14,52 @@
   <body>
     <div id="container">
       <div class="pagetitle">
-        <h1>Postcard Form</h1>
-        <label for="spreadsheet" class="required-field" >spreadsheet</label> 
-        <input autofocus autocomplete="off" id="spreadsheet" onchange="mySheet('msg')" type="text" name="spreadsheet"><br />
-        <hr>
-        <br />
+        <h1>Postcard Entry Form</h1>
       </div>
       <div id="main">
-        <label for="zipcode" class="required-field" >zipcode</label> 
-        <input autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
+        <label for="zipcode" class="required-field" >zipcode</label>
+        <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
         <label for="state" class="required-field" >state</label>
-        <input autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state"><br />
-        <label for="city" class="required-field" >city/town</label>
-        <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
-        <label for="address" class="required-field" >address</label>
-        <input autocomplete="off" id="address" onchange="myLookup()" type="text" name="address"><br />
-        <label for="fullName">fullname</label> 
-        <input autocomplete="off" id="fullName"  onchange="mvFocus('email')" type="text" name="address"><br />
-        <label for="email">email</label> 
-        <input autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
-        <label for="phone">phone</label> 
-        <input autocomplete="off" id="phone"  type="text" name="phone"><br />
+        <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state">
+        <label style="margin-left: 201px" for="route">route</label>
+        <input style="margin-left: 21px" autocomplete="off" id="route" type="text" name="route"><br />
 
-        <br />
+        <label for="city" class="required-field" >city/town</label>
+        <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city">
+        <label style="margin-left: 200px"  for="stateSen">stateSen</label> 
+        <input style="margin-left: 1px" autocomplete="off" id="stateSen"  type="text" name="stateSen"><br />
+
+        <label for="address" class="required-field" >address</label>
+        <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
+        <input autocomplete="off" id="suite" onchange="myLookup()" type="text" name="address" placeholder="apt/suite">
+        <label style="margin-left: 76px"  for="stateRep">stateRep</label>
+        <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+
+        <label for="fullName">name</label> 
+        <input style="margin-left: 33px"  autocomplete="off" id="fullName"  onchange="mvFocus('lastName')" type="text" name="address" placeholder="first name">
+        <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastess" placeholder="last name"><br />
+        <label for="email">email</label> 
+        <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
+        <label for="phone">phone</label> 
+        <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
         <label class="required-field" >Required Field  </label><br /> 
-        <button onclick="mySubmit()">Submit Form</button>
-        <button onclick="myClear()">Clear Form</button>
         <br />
-        <br />
+        <button onclick="mySubmit()">Submit</button>
+        <button onclick="myClear()">Clear</button>
         <!--
         <label for="warning">Copy route FIRST!!</label> <br />
         -->
         <hr>
-        <label for="route">route</label>
-        <input autocomplete="off" id="route" type="text" name="route"><br />
-        <label for="stateSen">stateSen</label> 
-        <input autocomplete="off" id="stateSen"  type="text" name="stateSen">
-        <input type="text" name="senInfo" size="40" value="State Senator Route Information"><br />
-        <label for="stateRep">stateRep</label> 
-        <input autocomplete="off" id="stateRep"  type="text" name="stateRep">
-        <input type="text" name="senInfo" size="40" value="State Representative Route Information"><br />
+        <h2>Quick Instructions</h2>
+        <ul>
+          <li>Enter zipcode first. Massachusetts city/town will autofill</li>
+          <li>Enter address next. State senator and representative will autofill</li>
+          <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
+          <li>Out-of-state addresses must be entered manually</li>
+          <li>BEFORE hitting "Submit", copy the route info onto a sticky and afix it to postcard</li>
+          <li>Hit "Submit" to record the form data and clear the form</li>
+          <li>Hit "Clear" to clear the form without submitting the data</li>
+        </ul> 
       </div>
     </div>
   </body>
@@ -143,7 +149,7 @@ function myLookup() {
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
-  document.getElementById("fullName").focus();
+  document.getElementById("suite").focus();
 
   data2py({'zipcode':x,'town':y,'address':z});
 

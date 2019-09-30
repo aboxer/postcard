@@ -17,33 +17,34 @@
         <h1>Postcard Entry Form</h1>
       </div>
       <div id="main">
+        <label class="required-field" >required field  </label><br /> 
         <label for="zipcode" class="required-field" >zipcode</label>
         <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
         <label for="state" class="required-field" >state</label>
-        <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state">
-        <label style="margin-left: 201px" for="route">route</label>
-        <input style="margin-left: 21px" autocomplete="off" id="route" type="text" name="route"><br />
+        <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state"><br />
 
         <label for="city" class="required-field" >city/town</label>
-        <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city">
-        <label style="margin-left: 200px"  for="stateSen">stateSen</label> 
-        <input style="margin-left: 1px" autocomplete="off" id="stateSen"  type="text" name="stateSen"><br />
+        <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
 
         <label for="address" class="required-field" >address</label>
         <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
-        <input autocomplete="off" id="suite" onchange="myLookup()" type="text" name="address" placeholder="apt/suite">
-        <label style="margin-left: 76px"  for="stateRep">stateRep</label>
-        <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+        <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="address" placeholder="apt/suite"><br />
 
-        <label for="fullName">name</label> 
-        <input style="margin-left: 33px"  autocomplete="off" id="fullName"  onchange="mvFocus('lastName')" type="text" name="address" placeholder="first name">
-        <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastess" placeholder="last name"><br />
+        <label for="firstName">name</label> 
+        <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name="address" placeholder="first name">
+        <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
         <label for="email">email</label> 
         <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
         <label for="phone">phone</label> 
         <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
-        <label class="required-field" >Required Field  </label><br /> 
         <br />
+        <label for="route">route</label>
+        <input  autocomplete="off" id="route" type="text" name="route">
+        <label style="margin-left: 20px"  for="stateSen">stateSen</label> 
+        <input autocomplete="off" id="stateSen"  type="text" name="stateSen">
+        <label for="stateRep">stateRep</label>
+        <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+
         <button onclick="mySubmit()">Submit</button>
         <button onclick="myClear()">Clear</button>
         <!--
@@ -56,6 +57,7 @@
           <li>Enter address next. State senator and representative will autofill</li>
           <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
           <li>Out-of-state addresses must be entered manually</li>
+          <li>Hit TAB to skip a field</li>
           <li>BEFORE hitting "Submit", copy the route info onto a sticky and afix it to postcard</li>
           <li>Hit "Submit" to record the form data and clear the form</li>
           <li>Hit "Clear" to clear the form without submitting the data</li>
@@ -66,7 +68,7 @@
 </html>
 
 <script>
-var formNames = ['zipcode','state','city','address','fullName','email','phone','stateSen','stateRep','route'];
+var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route'];
 
 function mvFocus(next){
   document.getElementById(next).focus();

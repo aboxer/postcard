@@ -59,6 +59,7 @@
           <li>Out-of-state addresses must be entered manually</li>
           <li>Hit TAB to skip a field</li>
           <li>BEFORE hitting "Submit", copy the route info onto a sticky and afix it to postcard</li>
+          <li>The format of route is "senator_room/representative_room"</li>
           <li>Hit "Submit" to record the form data and clear the form</li>
           <li>Hit "Clear" to clear the form without submitting the data</li>
         </ul> 
@@ -178,22 +179,20 @@ function myClear(){
 }
 
 function mySubmit(){
-  var v = document.getElementById("spreadsheet").value;
   var w = document.getElementById("state").value;
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
   //if((w == "") || (x == "") || (y == "") || (z == "")){
-  if(w == "" || x == "" || z=="" || y =="" || v == ""){
+  if(w == "" || x == "" || z=="" || y ==""){
     alert("required field missing!");
   }
   else {
     var msg = {};
     for (var i = 0; i < formNames.length; i++) { 
-      //msg['"' + formNames[i] + '"'] = document.getElementById(formNames[i]).value;
       msg[formNames[i]] = document.getElementById(formNames[i]).value;
     }
-    //console.log(JSON.stringify(msg));
+    console.log(JSON.stringify(msg));
     $.post( "/submitted", {
       javascript_data: JSON.stringify(msg)
     });

@@ -54,8 +54,8 @@
         <h2>Quick Instructions</h2>
         <ul>
           <li>Enter zipcode first. Massachusetts city/town will autofill</li>
-          <li>Non-MA zipcodes will NOT autofill state, city/town or address</li>
-          <li>Enter address next. State senator and representative will autofill</li>
+          <li>Non-MA zipcodes will NOT autofill state or city/town</li>
+          <li>Enter address next. Massachusetts state senator and representative will autofill</li>
           <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
           <li>Hit TAB to skip a field</li>
           <li>BEFORE hitting "Submit", copy the route info onto a sticky and afix it to postcard</li>
@@ -171,7 +171,7 @@ var getSenRep = function(){
       document.getElementById("stateRep").value = w["Representative"];
     }
     else {
-      document.getElementById("route").value = "Unkown";
+      document.getElementById("route").value = "Unknown";
       document.getElementById("stateSen").value = ""
       document.getElementById("stateRep").value = ""
     }

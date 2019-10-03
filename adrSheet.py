@@ -1,4 +1,5 @@
 import gspread
+import logging
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 import sys
@@ -8,18 +9,24 @@ appengine.monkeypatch()
 
 class adrSheet:
   def __init__(self,sheetName):
-    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] #enable the two apis selected
-    creds = ServiceAccountCredentials.from_json_keyfile_name('gcCreds.json',scope) #file downloaded from google API console
+    self.scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] #enable the two apis selected
+    self.creds = ServiceAccountCredentials.from_json_keyfile_name('gcCreds.json',self.scope) #file downloaded from google API console
+    self.retries = 3
+    self.sheetName = sheetName
 
-    gc = gspread.authorize(creds) #authorize access to the spreadsheet
-    try:
-      self.wks = gc.open(sheetName).sheet1 #open the spreadsheet by name
-    except:
-      print "Unexpected error:", sys.exc_info()[0]
-      print "message:", sys.exc_info()[0].message
-      print 'ERR: spreadsheet not found'
+    for tries in range(self.retries):
+      try:
+        gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
+        self.wks = gc.open(sheetName).sheet1 #open the spreadsheet by name
+        self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
+        break
+      except:
+        print "Unexpected error:", sys.exc_info()[0]
+        print "message:", sys.exc_info()[0].message
+        print 'ERR: spreadsheet not found'
+    else:
       exit()
-    self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
+
     self.lastRow = len(self.sheet) + 1
 
   def getAdr(self,rowNum):
@@ -63,19 +70,32 @@ class adrSheet:
       return False
 
   def addRow(self,formDat):
-    try:
-      print 'dbg0',formDat
-      values = []
-      #for x in ['fullName','address','city','state','zipcode','phone','email']:
-      for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
-        print 'dbg1',x,formDat[x]
-        values.append(formDat[x])
-      #tmp = ['aaron boxer','24 adams st.','arlington','ma','02474','978-821-9102','aboxer51@yahoo.com']
-      #values = ['joan goodman','24 Adams St.','Arlington','MA','02474','978-821-9102','aboxer51@yahoo.com']
-      self.wks.append_row(values)
-      print 'dbg2',values
-      return True
-    except:
+    for tries in range(self.retries):  #may be idle so long that spreadsheet closes
+      try:
+        gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
+        self.wks = gc.open(self.sheetName).sheet1 #open the spreadsheet by name
+        break
+      except:
+        logging.warning( 'ERR: reopen spreadsheet not found')
+    else:
+      logging.error( 'ERR: reopen spreadsheet retries fail')
+      exit()
+
+    print 'dbg0',formDat
+    values = []
+    for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
+      print 'dbg1',x,formDat[x]
+      values.append(formDat[x])
+
+    for tries in range(self.retries):
+      try:
+        self.wks.append_row(values)
+        print 'dbg2',values
+        return True
+      except:
+        pass
+    else:
+      logging.error( 'ERR: spreadsheet update retires fail')
       return False
 
 

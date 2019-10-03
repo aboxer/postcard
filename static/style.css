@@ -6,3 +6,22 @@
     content: "*";
     color: red;
 }
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 16px;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  width: 70px;
+  outline: none;
+  cursor: pointer;
+}
+
+.button1 {
+  background-color: #f44336;
+}

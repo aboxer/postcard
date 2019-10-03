@@ -28,10 +28,10 @@
 
         <label for="address" class="required-field" >address</label>
         <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
-        <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="address" placeholder="apt/suite"><br />
+        <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite"><br />
 
         <label for="firstName">name</label> 
-        <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name="address" placeholder="first name">
+        <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
         <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
         <label for="email">email</label> 
         <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
@@ -45,8 +45,8 @@
         <label for="stateRep">stateRep</label>
         <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
 
-        <button onclick="mySubmit()">Submit</button>
-        <button onclick="myClear()">Clear</button>
+        <button class="button " onclick="mySubmit()">Submit</button>
+        <button class="button  button1" onclick="myClear()">Clear</button>
         <!--
         <label for="warning">Copy route FIRST!!</label> <br />
         -->
@@ -149,13 +149,19 @@ function myCity(msg) {
 
 
 function myLookup() {
+  document.getElementById("suite").focus();
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
-  document.getElementById("suite").focus();
 
-  data2py({'zipcode':x,'town':y,'address':z});
+  //data2py({'zipcode':x,'town':y,'address':z});
+  var msg = {'zipcode':x,'town':y,'address':z};
+  $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
+     getSenRep //don't do this function until after the post completes
+  );
+}
 
+var getSenRep = function(){
   $.get("/getpythondata", function(data) {
     var w = $.parseJSON(data);
     if("route" in w){
@@ -170,6 +176,7 @@ function myLookup() {
     }
   })
 }
+
 
 function myClear(){
   for (var i = 0; i < formNames.length; i++) { 

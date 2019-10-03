@@ -75,11 +75,15 @@ def get_post_javascript_data():
 def get_python_data():
     global formDat
     adr = [formDat['address'],formDat['town'],formDat['zipcode']]
-    response = lkupLib.lkupLeg(adr) #exits if no resonse from website
-    senRep = lkupLib.legScrape(response)
-    if len(senRep) > 1: #lookup worked, calculate route code
-      senRep['route'] = lkupLib.mkRoute(senRep)
-    return json.dumps(senRep)
+    for tries in range(5):
+      response = lkupLib.lkupLeg(adr) #returns none if retries fail
+      if response != None: #got something from website, scrape it and return
+        senRep = lkupLib.legScrape(response)
+        if len(senRep) > 1: #lookup worked, calculate route code
+          senRep['route'] = lkupLib.mkRoute(senRep)
+        return json.dumps(senRep)
+    return None
+
 
 @app.errorhandler(500)
 def server_error(e):

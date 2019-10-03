@@ -7,6 +7,17 @@
     color: red;
 }
 
+.biglabel {
+    height:30px;
+    font-size:18pt;
+}
+
+.bigtext {
+    height:30px;
+    width:170px;
+    font-size:18pt;
+}
+
 .button {
   background-color: #4CAF50;
   border: none;

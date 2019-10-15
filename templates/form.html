@@ -16,42 +16,51 @@
       <div class="pagetitle">
         <h1>Postcard Entry Form</h1>
       </div>
-      <div id="main">
-        <label class="required-field" >required field  </label><br /> 
-        <label for="zipcode" class="required-field" >zipcode</label>
-        <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
-        <label for="state" class="required-field" >state</label>
-        <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state"><br />
+      <div class="row" id="main">
+        <div class="column">
+          <label class="required-field" >required field  </label><br /> 
+          <label for="zipcode" class="required-field" >zipcode</label>
+          <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
+          <label for="state" class="required-field" >state</label>
+          <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state"><br />
 
-        <label for="city" class="required-field" >city/town</label>
-        <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
+          <label for="city" class="required-field" >city/town</label>
+          <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
 
-        <label for="address" class="required-field" >address</label>
-        <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
-        <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite"><br />
+          <label for="address" class="required-field" >address</label>
+          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
+          <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite"><br />
 
-        <label for="firstName">name</label> 
-        <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
-        <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
-        <label for="email">email</label> 
-        <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
-        <label for="phone">phone</label> 
-        <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
-        <br />
-        <label class="biglabel" for="route">route</label>
-        <input  autocomplete="off" id="route" type="text" name="route" class="bigtext">
-        <label style="margin-left: 20px"  for="stateSen">stateSen</label> 
-        <input autocomplete="off" id="stateSen"  type="text" name="stateSen">
-        <label for="stateRep">stateRep</label>
-        <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+          <label for="firstName">name</label> 
+          <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
+          <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
+          <label for="email">email</label> 
+          <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
+          <label for="phone">phone</label> 
+          <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
+          <br />
+          <label for="stateSen">stateSen</label> 
+          <input autocomplete="off" id="stateSen"  type="text" name="stateSen">
+          <label for="stateRep">stateRep</label>
+          <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+          <label class="biglabel" for="route">route</label>
+          <input style="margin-left: 4px" autocomplete="off" id="route" type="text" name="route" class="bigtext">
 
-        <button class="button " onclick="mySubmit()">Submit</button>
-        <button class="button  button1" onclick="myClear()">Clear</button>
-        <!--
-        <label for="warning">Copy route FIRST!!</label> <br />
-        -->
+          <button class="button " onclick="mySubmit()">Submit</button>
+          <button class="button  button1" onclick="myClear()">Clear</button>
+        </div>
+        <div class="column">
+          <h3>Street Guesses</h3>
+          <input style="margin-left: 8px"  autocomplete="off" id="match1"  type="text" name="match1"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="match2"  type="text" name="match2"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="match3"  type="text" name="match3"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="match4"  type="text" name="match4"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="match5"  type="text" name="match5"><br />
+        </div>
+      </div>
+      <div>
         <hr>
-        <h2>Quick Instructions</h2>
+        <h3>Quick Instructions</h3>
         <ul>
           <li>Enter zipcode first. Massachusetts city/town will autofill</li>
           <li>Non-MA zipcodes will NOT autofill state or city/town</li>

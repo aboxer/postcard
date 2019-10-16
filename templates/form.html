@@ -178,16 +178,22 @@ var getSenRep = function(){
       document.getElementById("route").value = w["route"];
       document.getElementById("stateSen").value = w["Senator"];
       document.getElementById("stateRep").value = w["Representative"];
+      document.getElementById("guess1").value = "";
+      document.getElementById("guess2").value = "";
+      document.getElementById("guess3").value = "";
+      document.getElementById("guess4").value = "";
+      document.getElementById("guess5").value = "";
+
     }
     else {
       document.getElementById("route").value = "Unknown";
-      document.getElementById("stateSen").value = ""
-      document.getElementById("stateRep").value = ""
-      document.getElementById("guess1").value = "guess1"
-      document.getElementById("guess2").value = "guess2"
-      document.getElementById("guess3").value = "guess3"
-      document.getElementById("guess4").value = "guess4"
-      document.getElementById("guess5").value = "guess5"
+      document.getElementById("stateSen").value = "";
+      document.getElementById("stateRep").value = "";
+      document.getElementById("guess1").value = w["guesses"][0];
+      document.getElementById("guess2").value = w["guesses"][1];
+      document.getElementById("guess3").value = w["guesses"][2];
+      document.getElementById("guess4").value = w["guesses"][3];
+      document.getElementById("guess5").value = w["guesses"][4];
     }
   })
 }
@@ -223,7 +229,11 @@ function mySubmit(){
 }
 
 function mkGuess(guess){
-  document.getElementById("address").value = guess;
+  var x = document.getElementById("address").value;
+  var y = x.split(" ",2);
+  if(isNaN(y[0])) var z = guess
+  else var z = y[0] + " " + guess;
+  document.getElementById("address").value = z;
 }
 
 

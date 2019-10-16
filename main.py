@@ -15,6 +15,9 @@
 # [START app]
 import logging
 import json
+import re
+from fuzzywuzzy import fuzz
+
 
 # [START imports]
 from flask import Flask, render_template, request
@@ -29,7 +32,11 @@ app = Flask(__name__)
 
 formDat = None
 wks = None
-
+rf = open('zipStreet.json', 'r')
+r = rf.read()
+zipStreets = json.loads(r)
+rf.close()
+ 
 # [START form]
 #@app.route('/form')
 @app.route('/')
@@ -81,9 +88,44 @@ def get_python_data():
         senRep = lkupLib.legScrape(response)
         if len(senRep) > 1: #lookup worked, calculate route code
           senRep['route'] = lkupLib.mkRoute(senRep)
+        else: #lookup failed. return list of guesses
+          senRep['guesses'] = mkGuess(formDat['zipcode'],formDat['address'])
         return json.dumps(senRep)
     return None
 
+def getMin(best):
+  minIdx = 0
+  minScore = best[minIdx][0]
+  for i in range(1,len(best)):
+    j = best[i][0]
+    if j < minScore:
+      minScore = j
+      minIdx = i
+  return minIdx
+
+def score(elem):
+  return elem[0]
+
+def mkGuess(zipcode,address):
+  global zipStreets
+  streets = zipStreets[zipcode]
+  best = [(0,'a'),(0,'b'),(0,'c'),(0,'d'),(0,'e')]
+  tmp = address.split(' ',2)
+  if re.search(r'\d', tmp[0]): 
+    adr = tmp[1]
+  else:
+    adr = ' '.join(tmp)
+
+  for street in streets:
+    Ratio = fuzz.ratio(adr.lower(),street.lower())
+    #print Ratio, street
+    minIdx = getMin(best)
+    if Ratio > best[minIdx][0]:
+      best[minIdx] = (Ratio,street)
+
+  best.sort(key=score,reverse=True)
+  #return ['guessa','guessb','guessc','guessd','guesse']
+  return [best[0][1],best[1][1],best[2][1],best[3][1],best[4][1]]
 
 @app.errorhandler(500)
 def server_error(e):

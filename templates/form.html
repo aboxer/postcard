@@ -51,11 +51,11 @@
         </div>
         <div class="column">
           <h3>Street Guesses</h3>
-          <input style="margin-left: 8px"  autocomplete="off" id="match1"  type="text" name="match1"><br />
-          <input style="margin-left: 8px"  autocomplete="off" id="match2"  type="text" name="match2"><br />
-          <input style="margin-left: 8px"  autocomplete="off" id="match3"  type="text" name="match3"><br />
-          <input style="margin-left: 8px"  autocomplete="off" id="match4"  type="text" name="match4"><br />
-          <input style="margin-left: 8px"  autocomplete="off" id="match5"  type="text" name="match5"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="guess1"  type="text" name="guess1" onclick="mkGuess(value)"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="guess2"  type="text" name="guess2" onclick="mkGuess(value)"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="guess3"  type="text" name="guess3" onclick="mkGuess(value)"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="guess4"  type="text" name="guess4" onclick="mkGuess(value)"><br />
+          <input style="margin-left: 8px"  autocomplete="off" id="guess5"  type="text" name="guess5" onclick="mkGuess(value)"><br />
         </div>
       </div>
       <div>
@@ -79,7 +79,7 @@
 </html>
 
 <script>
-var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route'];
+var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
 
 function mvFocus(next){
   document.getElementById(next).focus();
@@ -183,6 +183,11 @@ var getSenRep = function(){
       document.getElementById("route").value = "Unknown";
       document.getElementById("stateSen").value = ""
       document.getElementById("stateRep").value = ""
+      document.getElementById("guess1").value = "guess1"
+      document.getElementById("guess2").value = "guess2"
+      document.getElementById("guess3").value = "guess3"
+      document.getElementById("guess4").value = "guess4"
+      document.getElementById("guess5").value = "guess5"
     }
   })
 }
@@ -216,6 +221,11 @@ function mySubmit(){
     myClear()
   }
 }
+
+function mkGuess(guess){
+  document.getElementById("address").value = guess;
+}
+
 
 </script>
 

@@ -32,7 +32,7 @@ app = Flask(__name__)
 
 formDat = None
 wks = None
-rf = open('zipStreet.json', 'r')
+rf = open('streetDB.json', 'r')
 r = rf.read()
 zipStreets = json.loads(r)
 rf.close()

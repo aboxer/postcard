@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2016 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +20,10 @@ import json
 import re
 from fuzzywuzzy import fuzz
 #import usaddress
+#import pyap
 from nameparser import HumanName
+from streetaddress import StreetAddressParser
+
 
 
 # [START imports]
@@ -73,6 +78,10 @@ def submitted_form():
     formDat['firstName'] = name.first + ' ' + name.middle
     formDat['lastName'] = name.last
     #print formDat;
+    addr_parser = StreetAddressParser()
+    tmp = addr_parser.parse(formDat['address'])
+    formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+    formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata
@@ -93,6 +102,32 @@ def get_python_data():
     #  print tmp1
     #except:
     #  tmp1 = ''
+    #test_address = """
+    #    Lorem ipsum
+    #    225 E. John Carpenter Freeway,
+    #    Suite 1500 Irving, Texas 75062
+    #    Dorem sit amet
+    #"""
+    #test_address = """
+    #  24 adams st
+    #"""
+
+    #addresses = pyap.parse([formDat['address']], country='US')
+    #print 'dbg7 ',formDat['address'], test_address
+    #addresses = pyap.parse(test_address, country='US')
+    #print 'dbg6 ', addresses
+    #for address in addresses:
+    #  # shows found address
+    #  print 'dbg4 ', address
+    #  # shows address parts
+    #  print 'dbg5 ', address.as_dict()
+
+    addr_parser = StreetAddressParser()
+    tmp = addr_parser.parse(formDat['address'])
+    formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+    formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
+    print 'dbg4 adr', formDat['address'], 'suite ', formDat['suite']
+
 
     adr = [formDat['address'],formDat['town'],formDat['zipcode']]
     for tries in range(5):

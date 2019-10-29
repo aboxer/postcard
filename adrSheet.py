@@ -83,8 +83,8 @@ class adrSheet:
 
     print 'dbg0',formDat
     values = []
-    #for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
-    for x in ['firstName','lastName','address','city','state','zipcode','phone','email']:
+    for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
+    #for x in ['firstName','lastName','address','city','state','zipcode','phone','email']:
       print 'dbg1',x,formDat[x]
       values.append(formDat[x])
 

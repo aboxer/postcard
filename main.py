@@ -17,6 +17,8 @@ import logging
 import json
 import re
 from fuzzywuzzy import fuzz
+#import usaddress
+from nameparser import HumanName
 
 
 # [START imports]
@@ -66,6 +68,10 @@ def submitted_form():
     global wks
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
+    name = HumanName(formDat['firstName'])
+    #print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
+    formDat['firstName'] = name.first + ' ' + name.middle
+    formDat['lastName'] = name.last
     #print formDat;
     wks.addRow(formDat)
     #return render_template('form.html')
@@ -81,6 +87,13 @@ def get_post_javascript_data():
 @app.route('/getpythondata')
 def get_python_data():
     global formDat
+    #try:
+    #  tmp = usaddress.tag(formDat['address'])
+    #  tmp1 = ' '.join(tmp['AddressNumber'],tmp['StreetNamePreDirectional'],tmp['StreetName'],tmp['StreetNamePostType'])
+    #  print tmp1
+    #except:
+    #  tmp1 = ''
+
     adr = [formDat['address'],formDat['town'],formDat['zipcode']]
     for tries in range(5):
       response = lkupLib.lkupLeg(adr) #returns none if retries fail

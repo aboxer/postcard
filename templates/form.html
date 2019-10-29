@@ -28,12 +28,19 @@
           <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
 
           <label for="address" class="required-field" >address</label>
-          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address">
-          <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite"><br />
-
+          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address" size="70" placeholder="      number                 street                                     apt/suite">
+          <br />
+          <!--
+          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address" size="70">
+          <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite">
+          -->
           <label for="firstName">name</label> 
+          <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('email')" type="text" name=" firstName" size="70" placeholder="   first    middle    last">
+          <br />
+          <!--
           <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
           <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
+          -->
           <label for="email">email</label> 
           <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
           <label for="phone">phone</label> 
@@ -80,7 +87,8 @@
 </html>
 
 <script>
-var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
+//var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
+var formNames = ['zipcode','state','city','address','firstName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
 
 function mvFocus(next){
   document.getElementById(next).focus();
@@ -111,6 +119,7 @@ function mySheet(){
 
 //zipcode to town lookup and send to python
 function myZip(msg) {
+  lkupClear();
   //console.log(msg['xx']);
   var x = document.getElementById("zipcode").value; //find the town for this zipcode
   for (var i = 0; i < zip2town.length; i++) { 
@@ -160,7 +169,8 @@ function myCity(msg) {
 
 
 function myLookup() {
-  document.getElementById("suite").focus();
+  //document.getElementById("suite").focus();
+  document.getElementById("firstName").focus();
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
@@ -173,6 +183,7 @@ function myLookup() {
 }
 
 var getSenRep = function(){
+  lkupClear();
   $.get("/getpythondata", function(data) {
     var w = $.parseJSON(data);
     if("route" in w){
@@ -197,6 +208,13 @@ var getSenRep = function(){
       document.getElementById("guess5").value = w["guesses"][4];
     }
   })
+}
+
+
+function lkupClear(){
+  document.getElementById("route").value = "";
+  document.getElementById("stateSen").value = "";
+  document.getElementById("stateRep").value = "";
 }
 
 
@@ -230,6 +248,7 @@ function mySubmit(){
 }
 
 function mkGuess(guess){
+  lkupClear();
   var x = document.getElementById("address").value;
   var y = x.split(" ",2);
   if(isNaN(y[0])) var z = guess

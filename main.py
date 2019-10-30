@@ -80,8 +80,12 @@ def submitted_form():
     #print formDat;
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
-    formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
-    formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
+    if tmp['house'] and tmp['street_full']:
+      formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+    try:
+      formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
+    except:
+      formDat['suite'] = ''
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata
@@ -96,36 +100,15 @@ def get_post_javascript_data():
 @app.route('/getpythondata')
 def get_python_data():
     global formDat
-    #try:
-    #  tmp = usaddress.tag(formDat['address'])
-    #  tmp1 = ' '.join(tmp['AddressNumber'],tmp['StreetNamePreDirectional'],tmp['StreetName'],tmp['StreetNamePostType'])
-    #  print tmp1
-    #except:
-    #  tmp1 = ''
-    #test_address = """
-    #    Lorem ipsum
-    #    225 E. John Carpenter Freeway,
-    #    Suite 1500 Irving, Texas 75062
-    #    Dorem sit amet
-    #"""
-    #test_address = """
-    #  24 adams st
-    #"""
-
-    #addresses = pyap.parse([formDat['address']], country='US')
-    #print 'dbg7 ',formDat['address'], test_address
-    #addresses = pyap.parse(test_address, country='US')
-    #print 'dbg6 ', addresses
-    #for address in addresses:
-    #  # shows found address
-    #  print 'dbg4 ', address
-    #  # shows address parts
-    #  print 'dbg5 ', address.as_dict()
 
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
-    formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
-    formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
+    if tmp['house'] and tmp['street_full']:
+      formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+    try:
+      formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
+    except:
+      formDat['suite'] = ''
     print 'dbg4 adr', formDat['address'], 'suite ', formDat['suite']
 
 
@@ -156,10 +139,14 @@ def score(elem):
 
 def mkGuess(zipcode,address):
   global zipStreets
-  streets = zipStreets[zipcode]
-  best = [(0,'a'),(0,'b'),(0,'c'),(0,'d'),(0,'e')]
+  best = [(0,' '),(0,' '),(0,' '),(0,' '),(0,' ')]
+  try:
+    streets = zipStreets[zipcode]
+  except:
+    return [best[0][1],best[1][1],best[2][1],best[3][1],best[4][1]]
   tmp = address.split(' ',2)
-  if re.search(r'\d', tmp[0]): 
+  #if re.search(r'\d', tmp[0]): 
+  if re.search(r'\d', tmp[0]) and len(tmp) > 1: 
     adr = tmp[1]
   else:
     adr = ' '.join(tmp)

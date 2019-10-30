@@ -20,11 +20,11 @@
         <div class="column">
           <label class="required-field" >required field  </label><br /> 
           <label for="zipcode" class="required-field" >zipcode</label>
-          <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode"><br />
+          <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode" size="13"><br />
           <label for="state" class="required-field" >state</label>
           <input style="margin-left: 31px"  autocomplete="off" id="state" onchange="mvFocus('city')" type="text" name="state"><br />
 
-          <label for="city" class="required-field" >city/town</label>
+          <label for="city" class="required-field" size="50" >city/town</label>
           <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
 
           <label for="address" class="required-field" >address</label>
@@ -35,14 +35,14 @@
           <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite">
           -->
           <label for="firstName">name</label> 
-          <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('email')" type="text" name=" firstName" size="70" placeholder="   first    middle    last">
+          <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('email')" type="text" name=" firstName" size="70" placeholder="      first    middle    last">
           <br />
           <!--
           <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
           <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
           -->
           <label for="email">email</label> 
-          <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email"><br />
+          <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email" size="50"><br />
           <label for="phone">phone</label> 
           <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
           <br />
@@ -70,16 +70,20 @@
         <h3>Quick Instructions</h3>
         <ul>
           <li>Enter zipcode first. Massachusetts city/town will autofill</li>
-          <li>Non-MA zipcodes will NOT autofill state or city/town</li>
           <li>Enter address next. Massachusetts state senator and representative will autofill</li>
-          <li>If Route UNKNOWN, click on closest Street Guess to look up a valid street</li>
-          <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
-          <li>Hit TAB to skip a field</li>
           <li>BEFORE hitting "Submit", copy the route info onto a sticky and afix it to postcard</li>
-          <li>The format of route is "senator_room/representative_room"</li>
           <li>Hit "Submit" to record the form data and clear the form</li>
+          <li>If Route UNKNOWN, click on closest Street Guess to look up a valid street</li>
           <li>Hit "Clear" to clear the form without submitting the data</li>
-          <li>TIP: To get route without resubmitting, reenter required fields, wait for autofill and hit "Clear"</li>
+        </ul> 
+        <h3>Tips</h3>
+        <ul>
+          <li>Hit TAB to skip a field</li>
+          <li>Non-MA or invalid zipcodes will NOT autofill state or city/town</li>
+          <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
+          <li>Discontinued zipcodes may autofill with old names. Changing to correct names will change to new zipcode</li>
+          <li>The format of route is "senator_room/representative_room"</li>
+          <li>To get route without resubmitting, reenter required fields, wait for autofill and hit "Clear"</li>
         </ul> 
       </div>
     </div>

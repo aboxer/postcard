@@ -24,6 +24,8 @@ from fuzzywuzzy import fuzz
 from nameparser import HumanName
 from streetaddress import StreetAddressParser
 
+from google.appengine.ext import ndb
+from google.appengine.api import memcache
 
 
 # [START imports]
@@ -37,27 +39,23 @@ import adrSheet
 app = Flask(__name__)
 # [END create_app]
 
-formDat = None
-wks = None
-rf = open('streetDB.json', 'r')
-r = rf.read()
-zipStreets = json.loads(r)
-rf.close()
+#formDat = None
+#wks = None
  
 # [START form]
 #@app.route('/form')
 @app.route('/')
 def form():
-    global wks
-    wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
+    #global wks
+    #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     #print wks.getAdr(2)
     return render_template('form.html')
 # [END form]
 
-@app.route('/gsOpen', methods=['POST'])
+@app.route('/gsOpen', methods=['POST']) #NOTE - not used but will be when client can specify spreadsheet
 def spreadSheet():
-    global wks
-    global formDat
+    #global wks
+    #global formDat
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     print formDat
@@ -69,8 +67,9 @@ def spreadSheet():
 # [START submitted]
 @app.route('/submitted', methods=['POST'])
 def submitted_form():
-    global formDat
-    global wks
+    #global formDat
+    #global wks
+    wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     name = HumanName(formDat['firstName'])
@@ -80,36 +79,56 @@ def submitted_form():
     #print formDat;
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
+    #if tmp['house'] and tmp['street_full']:
+    #  formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+
     if tmp['house'] and tmp['street_full']:
       formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
-    try:
-      formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
-    except:
-      formDat['suite'] = ''
+    elif tmp['street_full']:
+      formDat['address'] = tmp['street_full']
+    else:
+      formDat['address'] = ''
+
+    formDat['suite'] = ''
+    for tmp2 in ['suite_type','suite_num','other']:
+      try:
+        formDat['suite'] += tmp[tmp2] + ' '
+      except:
+        pass
+
+    #print 'dbg4 adr', formDat['address'], 'suite ', formDat['suite']
+    #print 'dbg5 tmp', tmp
+
+
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata
 
 @app.route('/postmethod', methods = ['POST'])
 def get_post_javascript_data():
-    global formDat
+    #global formDat
     jsdata = request.form['javascript_data']
-    formDat = json.loads(jsdata)
+    #formDat = json.loads(jsdata)
+    tmp = json.loads(jsdata)
+    memcache.add(key="formDat",value=tmp,time=7200)
     return jsdata
 
 @app.route('/getpythondata')
 def get_python_data():
-    global formDat
+    #global formDat
+    formDat = memcache.get("formDat")
+    print 'dbg0',formDat
+    memcache.delete("formDat")
 
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
+
     if tmp['house'] and tmp['street_full']:
       formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
-    try:
-      formDat['suite'] = ' '.join([tmp['suite_type'],tmp['suite_num']])
-    except:
-      formDat['suite'] = ''
-    print 'dbg4 adr', formDat['address'], 'suite ', formDat['suite']
+    elif tmp['street_full']:
+      formDat['address'] = tmp['street_full']
+    else:
+      formDat['address'] = ''
 
 
     adr = [formDat['address'],formDat['town'],formDat['zipcode']]
@@ -138,7 +157,11 @@ def score(elem):
   return elem[0]
 
 def mkGuess(zipcode,address):
-  global zipStreets
+  rf = open('streetDB.json', 'r') #TODO - if performance sucks we may be able to do this in parallel with legislator lookup
+  r = rf.read()
+  zipStreets = json.loads(r)
+  rf.close()
+
   best = [(0,' '),(0,' '),(0,' '),(0,' '),(0,' ')]
   try:
     streets = zipStreets[zipcode]
@@ -165,7 +188,7 @@ def mkGuess(zipcode,address):
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace.
-    logging.exception('An error occurred during a request.')
+    logging.exception('ERR request %s',e)
     return 'An internal error occurred.', 500
 # [END app]
 

@@ -47,9 +47,9 @@
           <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
           <br />
           <label for="stateSen">stateSen</label> 
-          <input autocomplete="off" id="stateSen"  type="text" name="stateSen">
+          <input autocomplete="off" id="stateSen"  type="text" name="stateSen" size="30">
           <label for="stateRep">stateRep</label>
-          <input autocomplete="off" id="stateRep"  type="text" name="stateRep"><br /> 
+          <input autocomplete="off" id="stateRep"  type="text" name="stateRep" size="30"><br /> 
           <label class="biglabel" for="route">route</label>
           <input style="margin-left: 4px" autocomplete="off" id="route" type="text" name="route" class="bigtext">
 
@@ -112,7 +112,7 @@ function submit(msg){
 }
 
 
-function mySheet(){
+function mySheet(){ //NOTE - not used but will be when client can specify sheet
   var x = document.getElementById("spreadsheet").value;
   $.post( "/gsOpen", {
     javascript_data: JSON.stringify(x)
@@ -121,7 +121,7 @@ function mySheet(){
 }
 
 
-//zipcode to town lookup and send to python
+//zipcode to town lookup 
 function myZip(msg) {
   lkupClear();
   //console.log(msg['xx']);
@@ -135,19 +135,19 @@ function myZip(msg) {
     document.getElementById("state").value = "";
     document.getElementById("city").value = "";
     document.getElementById("state").focus();
-    data2py({'zipcode':x});
+    //data2py({'zipcode':x});
   }
   else{
     //console.log(zip2town[i])
     document.getElementById("state").value = "MA";
     document.getElementById("city").value = zip2town[i][1];
     document.getElementById("address").focus();
-    data2py({'zipcode':x,'state':'MA','town':zip2town[i][1]});
+    //data2py({'zipcode':x,'state':'MA','town':zip2town[i][1]});
   }
 }
 
 
-//zipcode to town lookup and send to python
+//town to zipcode lookup. NOTE: only finds 1st zipcode for a town
 function myCity(msg) {
   //console.log(msg['xx']);
   var x = document.getElementById("city").value; //find the zipcode for this town
@@ -160,14 +160,14 @@ function myCity(msg) {
     document.getElementById("state").value = "";
     document.getElementById("zipcode").value = "";
     document.getElementById("zipcode").focus();
-    data2py({'zipcode':x});
+    //data2py({'zipcode':x});
   }
   else{
     var tmp = zip2town[i][0].toString().padStart(5,'0');
     document.getElementById("zipcode").value = tmp
     document.getElementById("state").value = "MA";
     document.getElementById("address").focus();
-    data2py({'town':x,'state':'MA','zipcode':tmp});
+    //data2py({'town':x,'state':'MA','zipcode':tmp});
   }
 }
 

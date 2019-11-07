@@ -15,6 +15,7 @@
 # limitations under the License.
 
 # [START app]
+import sys
 import logging
 import json
 import re
@@ -32,6 +33,8 @@ from google.appengine.api import memcache
 from flask import Flask, render_template, request
 import lkupLib
 import adrSheet
+#print 'paths'
+#print '\n'.join(sys.path)
 
 # [END imports]
 
@@ -39,13 +42,11 @@ import adrSheet
 app = Flask(__name__)
 # [END create_app]
 
-#formDat = None
-#wks = None
- 
 # [START form]
 #@app.route('/form')
 @app.route('/')
 def form():
+
     #global wks
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     #print wks.getAdr(2)
@@ -64,7 +65,7 @@ def spreadSheet():
     return jsdata
 
 
-# [START submitted]
+# Runs when the submit button puts the client data into the spreadsheet
 @app.route('/submitted', methods=['POST'])
 def submitted_form():
     #global formDat

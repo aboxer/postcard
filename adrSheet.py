@@ -13,6 +13,8 @@ class adrSheet:
     self.creds = ServiceAccountCredentials.from_json_keyfile_name('gcCreds.json',self.scope) #file downloaded from google API console
     self.retries = 3
     self.sheetName = sheetName
+    self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
+    self.sheetCols = {}
 
     for tries in range(self.retries):
       try:
@@ -28,6 +30,14 @@ class adrSheet:
       exit()
 
     self.lastRow = len(self.sheet) + 1
+    row1 = self.wks.row_values(1)
+    for key in self.sheetMap:
+      try:
+        self.sheetCols[key] = row1.index(self.sheetMap[key])
+      except:
+        self.sheetCols[key] = None
+    print 'dbg9',self.sheetCols
+        
 
   def getAdr(self,rowNum):
     if rowNum < 2 or rowNum > self.lastRow: #outside the bounds of the sheet

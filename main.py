@@ -70,7 +70,6 @@ def spreadSheet():
 def submitted_form():
     #global formDat
     #global wks
-    wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     name = HumanName(formDat['firstName'])
@@ -101,6 +100,7 @@ def submitted_form():
     #print 'dbg5 tmp', tmp
 
 
+    wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata

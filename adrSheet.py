@@ -13,8 +13,9 @@ class adrSheet:
     self.creds = ServiceAccountCredentials.from_json_keyfile_name('gcCreds.json',self.scope) #file downloaded from google API console
     self.retries = 3
     self.sheetName = sheetName
-    self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
-    self.sheetCols = {}
+    #self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
+    self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','State Senator':'stateSen','State Representative':'stateRep'}
+    self.sheetCols = []
 
     for tries in range(self.retries):
       try:
@@ -31,11 +32,8 @@ class adrSheet:
 
     self.lastRow = len(self.sheet) + 1
     row1 = self.wks.row_values(1)
-    for key in self.sheetMap:
-      try:
-        self.sheetCols[key] = row1.index(self.sheetMap[key])
-      except:
-        self.sheetCols[key] = None
+    for row in row1:
+      self.sheetCols.append(self.sheetMap[row])
     print 'dbg9',self.sheetCols
         
 
@@ -93,8 +91,8 @@ class adrSheet:
 
     print 'dbg0',formDat
     values = []
-    for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
-    #for x in ['firstName','lastName','address','city','state','zipcode','phone','email']:
+    #for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
+    for x in self.sheetCols:
       print 'dbg1',x,formDat[x]
       values.append(formDat[x])
 

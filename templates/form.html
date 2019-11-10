@@ -18,7 +18,9 @@
       </div>
       <div class="row" id="main">
         <div class="column">
-          <label class="required-field" >required field  </label><br /> 
+          <label class="required-field" >required field  </label>
+          <label style="margin-left: 160px" for="sheet"  size="50" >spreadsheet</label>
+          <input autocomplete="off" id="spreadSheet"  onchange="mySheet()"type="text" name="sheet" placeholder="acluCard"><br />
           <label for="zipcode" class="required-field" >zipcode</label>
           <input style="margin-left: 10px" autofocus autocomplete="off" id="zipcode" onchange="myZip({'xx':'dd'})" type="text" name="zipcode" size="13"><br />
           <label for="state" class="required-field" >state</label>
@@ -78,6 +80,7 @@
         </ul> 
         <h3>Tips</h3>
         <ul>
+          <li>Enter new spreadsheet name to change default from acluAdr </li>
           <li>Hit TAB to skip a field</li>
           <li>Non-MA or invalid zipcodes will NOT autofill state or city/town</li>
           <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
@@ -113,9 +116,11 @@ function submit(msg){
 
 
 function mySheet(){ //NOTE - not used but will be when client can specify sheet
-  var x = document.getElementById("spreadsheet").value;
+  var x = document.getElementById("spreadSheet").value;
+  console.log(JSON.stringify(x));
+  var msg = {'sheet':x};
   $.post( "/gsOpen", {
-    javascript_data: JSON.stringify(x)
+    javascript_data: JSON.stringify(msg)
   });
   document.getElementById("zipcode").focus();
 }
@@ -182,7 +187,7 @@ function myLookup() {
   //data2py({'zipcode':x,'town':y,'address':z});
   var msg = {'zipcode':x,'town':y,'address':z};
   $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
-     getSenRep //don't do this function until after the post completes
+     getSenRep //dont do this function until after the post completes
   );
 }
 
@@ -262,6 +267,13 @@ function mkGuess(guess){
   myLookup();
 }
 
+
+function shutDown() {
+  $.post( "/shutDown",{
+    javascript_data: JSON.stringify('dummy')
+  });
+ 
+}
 
 </script>
 

@@ -50,6 +50,7 @@ def form():
     #global wks
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     #print wks.getAdr(2)
+    memcache.add(key="spreadSheet",value="acluCard",time=7200)
     return render_template('form.html')
 # [END form]
 
@@ -59,9 +60,12 @@ def spreadSheet():
     #global formDat
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
-    print formDat
+    print 'dbg11', formDat
+    memcache.set(key="spreadSheet", value=formDat['sheet'], time=36000)
+    spreadSheet = memcache.get("spreadSheet")
+    print 'dbg12', spreadSheet
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
-    wks = adrSheet.adrSheet(formDat) #exits if spreadsheet not found
+    wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
     return jsdata
 
 
@@ -100,7 +104,8 @@ def submitted_form():
     #print 'dbg5 tmp', tmp
 
 
-    wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
+    spreadSheet = memcache.get("spreadSheet")
+    wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata
@@ -186,9 +191,20 @@ def mkGuess(zipcode,address):
   #return ['guessa','guessb','guessc','guessd','guesse']
   return [best[0][1],best[1][1],best[2][1],best[3][1],best[4][1]]
 
+@app.route('/shutDown', methods=['POST'])
+def shutDown():
+  memcache.delete("spreadSheet")
+  memcache.delete("formDat")
+  jsdata = request.form['javascript_data']
+  return jsdata 
+# [END form]
+
+
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace.
+    memcache.delete("formDat")
+    memcache.delete("spreadSheet")
     logging.exception('ERR request %s',e)
     return 'An internal error occurred.', 500
 # [END app]

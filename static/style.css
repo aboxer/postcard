@@ -53,3 +53,8 @@
   display: table;
   clear: both;
 }
+
+.commentbox {
+  vertical-align: top;
+  margin-left: 8
+}

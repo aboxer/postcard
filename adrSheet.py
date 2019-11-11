@@ -14,7 +14,7 @@ class adrSheet:
     self.retries = 3
     self.sheetName = sheetName
     #self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
-    self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','State Senator':'stateSen','State Representative':'stateRep'}
+    self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','comment:':'comment','State Senator':'stateSen','State Representative':'stateRep'}
     self.sheetCols = []
 
     for tries in range(self.retries):

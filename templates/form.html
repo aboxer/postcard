@@ -46,7 +46,10 @@
           <label for="email">email</label> 
           <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email" size="50"><br />
           <label for="phone">phone</label> 
-          <input style="margin-left: 28px"  autocomplete="off" id="phone"  type="text" name="phone"><br />
+          <input style="margin-left: 28px"  autocomplete="off" id="phone" onchange="mvFocus('comment')"  type="text" name="phone"><br />
+          <label for="comment">comment</label> 
+          <textarea class="commentbox" autocomplete="off" id="comment" rows = "5" cols = "69" maxlength="300" name = "comment" placeholder="340 char max"></textarea>
+          <br />
           <br />
           <label for="stateSen">stateSen</label> 
           <input autocomplete="off" id="stateSen"  type="text" name="stateSen" size="30">
@@ -95,7 +98,7 @@
 
 <script>
 //var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
-var formNames = ['zipcode','state','city','address','firstName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
+var formNames = ['zipcode','state','city','address','firstName','email','phone','comment','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
 
 function mvFocus(next){
   document.getElementById(next).focus();

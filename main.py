@@ -50,7 +50,7 @@ def form():
     #global wks
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     #print wks.getAdr(2)
-    memcache.add(key="spreadSheet",value="acluCard",time=7200)
+    memcache.add(key="spreadSheet",value="acluCard",time=36000)
     return render_template('form.html')
 # [END form]
 

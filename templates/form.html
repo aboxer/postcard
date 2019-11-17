@@ -104,21 +104,21 @@ function mvFocus(next){
   document.getElementById(next).focus();
 }
 
-function data2py(msg){
+function data2py(msg){ //not used
   $.post( "/postmethod", {
     javascript_data: JSON.stringify(msg)
   });
 }
 
 
-function submit(msg){
+function submit(msg){ //not used
   $.post( "/submitted", {
     javascript_data: JSON.stringify(msg)
   });
 }
 
-
-function mySheet(){ //NOTE - not used but will be when client can specify sheet
+//open up a spreadsheet
+function mySheet(){
   var x = document.getElementById("spreadSheet").value;
   console.log(JSON.stringify(x));
   var msg = {'sheet':x};
@@ -157,29 +157,24 @@ function myZip(msg) {
 
 //town to zipcode lookup. NOTE: only finds 1st zipcode for a town
 function myCity(msg) {
-  //console.log(msg['xx']);
-  var x = document.getElementById("city").value; //find the zipcode for this town
-  for (var i = 0; i < zip2town.length; i++) { 
-    if(zip2town[i][1] == x){
-      break;
+  if(document.getElementById("zipcode").value.length == 0){ //try to look up zipcode
+    var x = document.getElementById("city").value; //find the zipcode for this town
+    for (var i = 0; i < zip2town.length; i++) { 
+      if(zip2town[i][1].toUpperCase() == x.toUpperCase()){
+        break;
+      }
+    }
+    if(i != zip2town.length){ //got one
+      var tmp = zip2town[i][0].toString().padStart(5,'0');
+      document.getElementById("zipcode").value = tmp
+      document.getElementById("state").value = "MA";
     }
   }
-  if(i == zip2town.length){ //out of state 
-    document.getElementById("state").value = "";
-    document.getElementById("zipcode").value = "";
-    document.getElementById("zipcode").focus();
-    //data2py({'zipcode':x});
-  }
-  else{
-    var tmp = zip2town[i][0].toString().padStart(5,'0');
-    document.getElementById("zipcode").value = tmp
-    document.getElementById("state").value = "MA";
-    document.getElementById("address").focus();
-    //data2py({'town':x,'state':'MA','zipcode':tmp});
-  }
+  document.getElementById("address").focus();
 }
 
 
+//send address to server and get back the sen/rep info
 function myLookup() {
   //document.getElementById("suite").focus();
   document.getElementById("firstName").focus();
@@ -190,10 +185,11 @@ function myLookup() {
   //data2py({'zipcode':x,'town':y,'address':z});
   var msg = {'zipcode':x,'town':y,'address':z};
   $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
-     getSenRep //dont do this function until after the post completes
+     getSenRep //do this function after the post completes
   );
 }
 
+//get the lookup info after the address post completes
 var getSenRep = function(){
   lkupClear();
   $.get("/getpythondata", function(data) {

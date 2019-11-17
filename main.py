@@ -128,6 +128,7 @@ def get_python_data():
 
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
+    print 'dbg1',tmp
 
     if tmp['house'] and tmp['street_full']:
       formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
@@ -138,6 +139,7 @@ def get_python_data():
 
 
     adr = [formDat['address'],formDat['town'],formDat['zipcode']]
+    print 'dbg2',adr
     for tries in range(5):
       response = lkupLib.lkupLeg(adr) #returns none if retries fail
       if response != None: #got something from website, scrape it and return

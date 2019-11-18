@@ -118,7 +118,7 @@ function submit(msg){ //not used
 }
 
 //open up a spreadsheet
-function mySheet(){
+function mySheet(){ //not used
   var x = document.getElementById("spreadSheet").value;
   console.log(JSON.stringify(x));
   var msg = {'sheet':x};
@@ -175,24 +175,31 @@ function myCity(msg) {
 
 
 //send address to server and get back the sen/rep info
+//function myLookup() {
+//  //document.getElementById("suite").focus();
+//  document.getElementById("firstName").focus();
+//  var x = document.getElementById("zipcode").value;
+//  var y = document.getElementById("city").value;
+//  var z = document.getElementById("address").value;
+//
+//  //data2py({'zipcode':x,'town':y,'address':z});
+//  var msg = {'zipcode':x,'town':y,'address':z};
+//  $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
+//     getSenRep //do this function after the post completes
+//  );
+//}
+
+//get the lookup info after the address post completes
+//var getSenRep = function(){
 function myLookup() {
-  //document.getElementById("suite").focus();
   document.getElementById("firstName").focus();
+  lkupClear();
+  //$.get("/getpythondata", function(data) {
+  //var w = document.getElementById("spreadSheet").value;
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
-
-  //data2py({'zipcode':x,'town':y,'address':z});
-  var msg = {'zipcode':x,'town':y,'address':z};
-  $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
-     getSenRep //do this function after the post completes
-  );
-}
-
-//get the lookup info after the address post completes
-var getSenRep = function(){
-  lkupClear();
-  $.get("/getpythondata", function(data) {
+  $.get("/getpythondata",{zipcode:x,city:y,address:z}, function(data) {
     var w = $.parseJSON(data);
     if("route" in w){
       document.getElementById("route").value = w["route"];
@@ -244,7 +251,11 @@ function mySubmit(){
     alert("required field missing!");
   }
   else {
-    var msg = {};
+    //var msg = {};
+    var x = document.getElementById("spreadSheet").value;
+    if(x.length == 0) x = "acluCard";
+    //var msg = {'sheet':document.getElementById('spreadSheet').value};
+    var msg = {'sheet':x};
     for (var i = 0; i < formNames.length; i++) { 
       msg[formNames[i]] = document.getElementById(formNames[i]).value;
     }

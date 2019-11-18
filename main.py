@@ -25,8 +25,8 @@ from fuzzywuzzy import fuzz
 from nameparser import HumanName
 from streetaddress import StreetAddressParser
 
-from google.appengine.ext import ndb
-from google.appengine.api import memcache
+#from google.appengine.ext import ndb
+#from google.appengine.api import memcache
 
 
 # [START imports]
@@ -50,7 +50,7 @@ def form():
     #global wks
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     #print wks.getAdr(2)
-    memcache.add(key="spreadSheet",value="acluCard",time=36000)
+    #memcache.add(key="spreadSheet",value="acluCard",time=36000)
     return render_template('form.html')
 # [END form]
 
@@ -61,8 +61,8 @@ def spreadSheet():
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     print 'dbg11', formDat
-    memcache.set(key="spreadSheet", value=formDat['sheet'], time=36000)
-    spreadSheet = memcache.get("spreadSheet")
+    #memcache.set(key="spreadSheet", value=formDat['sheet'], time=36000)
+    #spreadSheet = memcache.get("spreadSheet")
     print 'dbg12', spreadSheet
     #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
     wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
@@ -104,8 +104,10 @@ def submitted_form():
     #print 'dbg5 tmp', tmp
 
 
-    spreadSheet = memcache.get("spreadSheet")
+    #spreadSheet = memcache.get("spreadSheet")
+    spreadSheet = formDat['sheet']
     wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
+    formDat.pop('sheet', None)
     wks.addRow(formDat)
     #return render_template('form.html')
     return jsdata
@@ -116,29 +118,35 @@ def get_post_javascript_data():
     jsdata = request.form['javascript_data']
     #formDat = json.loads(jsdata)
     tmp = json.loads(jsdata)
-    memcache.add(key="formDat",value=tmp,time=7200)
+    #memcache.add(key="formDat",value=tmp,time=7200)
     return jsdata
 
 @app.route('/getpythondata')
 def get_python_data():
+    #print 'dbg3',request.args.get('sheet'),request.args.get('zipcode')
     #global formDat
-    formDat = memcache.get("formDat")
-    print 'dbg0',formDat
-    memcache.delete("formDat")
+    #formDat = memcache.get("formDat")
+    #print 'dbg0',formDat
+    #memcache.delete("formDat")
 
     addr_parser = StreetAddressParser()
-    tmp = addr_parser.parse(formDat['address'])
+    #tmp = addr_parser.parse(formDat['address'])
+    tmp = addr_parser.parse(request.args.get('address'))
     print 'dbg1',tmp
 
     if tmp['house'] and tmp['street_full']:
-      formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+      #formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+      fullAdr = ' '.join([tmp['house'],tmp['street_full']])
     elif tmp['street_full']:
-      formDat['address'] = tmp['street_full']
+      #formDat['address'] = tmp['street_full']
+      fullAdr = tmp['street_full']
     else:
-      formDat['address'] = ''
+      #formDat['address'] = ''
+      fullAdr = ''
 
 
-    adr = [formDat['address'],formDat['town'],formDat['zipcode']]
+    #adr = [formDat['address'],formDat['town'],formDat['zipcode']]
+    adr = [fullAdr,request.args.get('city'),request.args.get('zipcode')]
     print 'dbg2',adr
     for tries in range(5):
       response = lkupLib.lkupLeg(adr) #returns none if retries fail
@@ -147,7 +155,9 @@ def get_python_data():
         if len(senRep) > 1: #lookup worked, calculate route code
           senRep['route'] = lkupLib.mkRoute(senRep)
         else: #lookup failed. return list of guesses
-          senRep['guesses'] = mkGuess(formDat['zipcode'],formDat['address'])
+          #senRep['guesses'] = mkGuess(formDat['zipcode'],formDat['address'])
+          print 'dbg3',request.args.get('zipcode'),tmp['street_full']
+          senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])
         return json.dumps(senRep)
     return None
 
@@ -195,8 +205,8 @@ def mkGuess(zipcode,address):
 
 @app.route('/shutDown', methods=['POST'])
 def shutDown():
-  memcache.delete("spreadSheet")
-  memcache.delete("formDat")
+  #memcache.delete("spreadSheet")
+  #memcache.delete("formDat")
   jsdata = request.form['javascript_data']
   return jsdata 
 # [END form]
@@ -205,8 +215,8 @@ def shutDown():
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace.
-    memcache.delete("formDat")
-    memcache.delete("spreadSheet")
+    #memcache.delete("formDat")
+    #memcache.delete("spreadSheet")
     logging.exception('ERR request %s',e)
     return 'An internal error occurred.', 500
 # [END app]

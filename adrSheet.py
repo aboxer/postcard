@@ -14,7 +14,7 @@ class adrSheet:
     self.retries = 3
     self.sheetName = sheetName
     #self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
-    self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','comment:':'comment','State Senator':'stateSen','State Representative':'stateRep','Route':'route'}
+    self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','Comment:':'comment','State Senator':'stateSen','State Representative':'stateRep','Route':'route'}
     self.sheetCols = []
     self.lastRow = 0
 
@@ -99,20 +99,23 @@ class adrSheet:
     print 'dbg8'
     self.lastRow = len(self.sheet) + 1
     row1 = self.wks.row_values(1)
-    for row in row1:
+    #put the internal column names in the same order as the official spreadsheet column names
+    for col in row1:
       try:
-        self.sheetCols.append(self.sheetMap[row])
+        self.sheetCols.append(self.sheetMap[col]) #found the official name in row1, append the internal name
       except:
-        self.sheetCols.append(None)
+        self.sheetCols.append(None) #blank column in row1 or no match for official name
     print 'dbg9',self.sheetCols
         
 
     print 'dbg0',formDat
     values = []
-    #for x in ['firstName','lastName','address','suite','city','state','zipcode','phone','email']:
-    for x in self.sheetCols:
-      print 'dbg1',x,formDat[x]
-      values.append(formDat[x])
+    for col in self.sheetCols: #go thru the internal names and add then to the row
+      if col == None:
+        values.append('') #blank or wrong name for this column
+      else:
+        print 'dbg1',col,formDat[col] #official name in this column
+        values.append(formDat[col])
 
     for tries in range(self.retries):
       try:

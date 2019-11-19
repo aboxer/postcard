@@ -30,19 +30,11 @@
           <input autocomplete="off" id="city"  onchange="myCity()"type="text" name="city"><br />
 
           <label for="address" class="required-field" >address</label>
-          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address" size="70" placeholder="      number                 street                                     apt/suite">
+          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="senrepLkup()" type="text" name="address" size="70" placeholder="      number                 street                                     apt/suite">
           <br />
-          <!--
-          <input style="margin-left: 12px"  autocomplete="off" id="address" onchange="myLookup()" type="text" name="address" size="70">
-          <input autocomplete="off" id="suite" onchange="mvFocus('firstName')" type="text" name="suite" placeholder="apt/suite">
-          -->
           <label for="firstName">name</label> 
           <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('email')" type="text" name=" firstName" size="70" placeholder="      first    middle    last">
           <br />
-          <!--
-          <input style="margin-left: 33px"  autocomplete="off" id="firstName"  onchange="mvFocus('lastName')" type="text" name=" firstName" placeholder="first name">
-          <input autocomplete="off" id="lastName"  onchange="mvFocus('email')" type="text" name="lastName" placeholder="last name"><br />
-          -->
           <label for="email">email</label> 
           <input style="margin-left: 32px"  autocomplete="off" id="email"  onchange="mvFocus('phone')" type="text" name="email" size="50"><br />
           <label for="phone">phone</label> 
@@ -97,11 +89,161 @@
 </html>
 
 <script>
-//var formNames = ['zipcode','state','city','address','suite','firstName','lastName','email','phone','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
+/*
+zipcode to city and city to zipcode lookups are done in this client code using zip2town array above.
+full MA addresses are sent to the server to look up on malegislature.gov and return the sen, rep and route info for that address.
+all the form data including spreadsheet name is sent to the server to append to the spreadsheet. Only the form data that has columns
+in the spreadsheet will be added. The rest will be discarded.
+*/
+
+//ids for all the text input boxes in the form
 var formNames = ['zipcode','state','city','address','firstName','email','phone','comment','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
 
+//just used to move focus to correct text box
 function mvFocus(next){
   document.getElementById(next).focus();
+}
+
+//zipcode to town lookup 
+function myZip(msg) {
+  lkupClear();
+  //console.log(msg['xx']);
+  var x = document.getElementById("zipcode").value; //find the town for this zipcode
+  for (var i = 0; i < zip2town.length; i++) { 
+    if(zip2town[i][0] == parseInt(x)){
+      break;
+    }
+  }
+  if(i == zip2town.length){ //out of state 
+    document.getElementById("state").value = "";
+    document.getElementById("city").value = "";
+    document.getElementById("state").focus();
+  }
+  else{
+    //console.log(zip2town[i])
+    document.getElementById("state").value = "MA";
+    document.getElementById("city").value = zip2town[i][1];
+    document.getElementById("address").focus();
+  }
+}
+
+//town to zipcode lookup. NOTE: only finds 1st zipcode for a town
+function myCity(msg) {
+  if(document.getElementById("zipcode").value.length == 0){ //try to look up zipcode
+    var x = document.getElementById("city").value; //find the zipcode for this town
+    for (var i = 0; i < zip2town.length; i++) { 
+      if(zip2town[i][1].toUpperCase() == x.toUpperCase()){
+        break;
+      }
+    }
+    if(i != zip2town.length){ //got one
+      var tmp = zip2town[i][0].toString().padStart(5,'0');
+      document.getElementById("zipcode").value = tmp
+      document.getElementById("state").value = "MA";
+    }
+  }
+  document.getElementById("address").focus();
+}
+
+
+//lookup the sen & rep info for the address in the url parameters
+function senrepLkup() {
+  document.getElementById("firstName").focus();
+  lkupClear();
+  var x = document.getElementById("zipcode").value;
+  var y = document.getElementById("city").value;
+  var z = document.getElementById("address").value;
+  $.get("/getpythondata",{zipcode:x,city:y,address:z},
+    function(data) {
+      var w = $.parseJSON(data);
+      if("route" in w){  //got a match
+        document.getElementById("route").value = w["route"];
+        document.getElementById("stateSen").value = w["Senator"];
+        document.getElementById("stateRep").value = w["Representative"];
+        document.getElementById("guess1").value = "";
+        document.getElementById("guess2").value = "";
+        document.getElementById("guess3").value = "";
+        document.getElementById("guess4").value = "";
+        document.getElementById("guess5").value = "";
+      }
+      else {  //no match - show the guesses
+        document.getElementById("route").value = "Unknown";
+        document.getElementById("stateSen").value = "";
+        document.getElementById("stateRep").value = "";
+        document.getElementById("guess1").value = w["guesses"][0];
+        document.getElementById("guess2").value = w["guesses"][1];
+        document.getElementById("guess3").value = w["guesses"][2];
+        document.getElementById("guess4").value = w["guesses"][3];
+        document.getElementById("guess5").value = w["guesses"][4];
+      }
+    }
+  )
+  .fail(function(e){
+    //console.log(e.responseText);
+    alert(e.responseText);
+  });
+}
+
+//just clear sen & rep data
+function lkupClear(){
+  document.getElementById("route").value = "";
+  document.getElementById("stateSen").value = "";
+  document.getElementById("stateRep").value = "";
+}
+
+//clear everything in the form except apreadsheet name
+function myClear(){
+  for (var i = 0; i < formNames.length; i++) { 
+    document.getElementById(formNames[i]).value = "";
+  }
+  document.getElementById("zipcode").focus();
+}
+
+//send all the data to the spreadsheet
+function mySubmit(){
+  var w = document.getElementById("state").value;
+  var x = document.getElementById("zipcode").value;
+  var y = document.getElementById("city").value;
+  var z = document.getElementById("address").value;
+  if(w == "" || x == "" || z=="" || y ==""){
+    alert("required field missing!");
+  }
+  else {
+    var x = document.getElementById("spreadSheet").value;
+    if(x.length == 0) x = "acluCard";
+    var msg = {'sheet':x};
+    for (var i = 0; i < formNames.length; i++) { 
+      msg[formNames[i]] = document.getElementById(formNames[i]).value;
+    }
+    console.log(JSON.stringify(msg));
+    $.post( "/submitted", {
+      javascript_data: JSON.stringify(msg)
+    })
+    .fail(function(e) {
+      console.log(e);
+      alert(e.responseText);
+    });
+    myClear()
+  }
+}
+
+//redo failed sen rep lookup with one of the guesses
+function mkGuess(guess){
+  lkupClear();
+  var x = document.getElementById("address").value;
+  var y = x.split(" ",2);
+  if(isNaN(y[0])) var z = guess
+  else var z = y[0] + " " + guess;
+  document.getElementById("address").value = z;
+  senrepLkup();
+}
+
+
+function shutDown() {
+  $.post( "/shutDown",{
+    javascript_data: JSON.stringify('dummy')
+  });
+ 
 }
 
 function data2py(msg){ //not used
@@ -129,172 +271,6 @@ function mySheet(){ //not used
 }
 
 
-//zipcode to town lookup 
-function myZip(msg) {
-  lkupClear();
-  //console.log(msg['xx']);
-  var x = document.getElementById("zipcode").value; //find the town for this zipcode
-  for (var i = 0; i < zip2town.length; i++) { 
-    if(zip2town[i][0] == parseInt(x)){
-      break;
-    }
-  }
-  if(i == zip2town.length){ //out of state 
-    document.getElementById("state").value = "";
-    document.getElementById("city").value = "";
-    document.getElementById("state").focus();
-    //data2py({'zipcode':x});
-  }
-  else{
-    //console.log(zip2town[i])
-    document.getElementById("state").value = "MA";
-    document.getElementById("city").value = zip2town[i][1];
-    document.getElementById("address").focus();
-    //data2py({'zipcode':x,'state':'MA','town':zip2town[i][1]});
-  }
-}
-
-
-//town to zipcode lookup. NOTE: only finds 1st zipcode for a town
-function myCity(msg) {
-  if(document.getElementById("zipcode").value.length == 0){ //try to look up zipcode
-    var x = document.getElementById("city").value; //find the zipcode for this town
-    for (var i = 0; i < zip2town.length; i++) { 
-      if(zip2town[i][1].toUpperCase() == x.toUpperCase()){
-        break;
-      }
-    }
-    if(i != zip2town.length){ //got one
-      var tmp = zip2town[i][0].toString().padStart(5,'0');
-      document.getElementById("zipcode").value = tmp
-      document.getElementById("state").value = "MA";
-    }
-  }
-  document.getElementById("address").focus();
-}
-
-
-//send address to server and get back the sen/rep info
-//function myLookup() {
-//  //document.getElementById("suite").focus();
-//  document.getElementById("firstName").focus();
-//  var x = document.getElementById("zipcode").value;
-//  var y = document.getElementById("city").value;
-//  var z = document.getElementById("address").value;
-//
-//  //data2py({'zipcode':x,'town':y,'address':z});
-//  var msg = {'zipcode':x,'town':y,'address':z};
-//  $.post( "/postmethod", {javascript_data: JSON.stringify(msg)},
-//     getSenRep //do this function after the post completes
-//  );
-//}
-
-//get the lookup info after the address post completes
-//var getSenRep = function(){
-function myLookup() {
-  document.getElementById("firstName").focus();
-  lkupClear();
-  //$.get("/getpythondata", function(data) {
-  //var w = document.getElementById("spreadSheet").value;
-  var x = document.getElementById("zipcode").value;
-  var y = document.getElementById("city").value;
-  var z = document.getElementById("address").value;
-  $.get("/getpythondata",{zipcode:x,city:y,address:z},
-    function(data) {
-      var w = $.parseJSON(data);
-      if("route" in w){
-        document.getElementById("route").value = w["route"];
-        document.getElementById("stateSen").value = w["Senator"];
-        document.getElementById("stateRep").value = w["Representative"];
-        document.getElementById("guess1").value = "";
-        document.getElementById("guess2").value = "";
-        document.getElementById("guess3").value = "";
-        document.getElementById("guess4").value = "";
-        document.getElementById("guess5").value = "";
-      }
-      else {
-        document.getElementById("route").value = "Unknown";
-        document.getElementById("stateSen").value = "";
-        document.getElementById("stateRep").value = "";
-        document.getElementById("guess1").value = w["guesses"][0];
-        document.getElementById("guess2").value = w["guesses"][1];
-        document.getElementById("guess3").value = w["guesses"][2];
-        document.getElementById("guess4").value = w["guesses"][3];
-        document.getElementById("guess5").value = w["guesses"][4];
-      }
-    }
-  )
-  .fail(function(e){
-    //console.log(e.responseText);
-    //alert("MA Legislature Website Down - Hit Clear and try again later");
-    alert(e.responseText);
-  });
-}
-
-function lkupClear(){
-  document.getElementById("route").value = "";
-  document.getElementById("stateSen").value = "";
-  document.getElementById("stateRep").value = "";
-}
-
-
-function myClear(){
-  for (var i = 0; i < formNames.length; i++) { 
-    document.getElementById(formNames[i]).value = "";
-  }
-  document.getElementById("zipcode").focus();
-}
-
-//send all the data to the spreadsheet
-function mySubmit(){
-  var w = document.getElementById("state").value;
-  var x = document.getElementById("zipcode").value;
-  var y = document.getElementById("city").value;
-  var z = document.getElementById("address").value;
-  //if((w == "") || (x == "") || (y == "") || (z == "")){
-  if(w == "" || x == "" || z=="" || y ==""){
-    alert("required field missing!");
-  }
-  else {
-    //var msg = {};
-    var x = document.getElementById("spreadSheet").value;
-    if(x.length == 0) x = "acluCard";
-    //var msg = {'sheet':document.getElementById('spreadSheet').value};
-    var msg = {'sheet':x};
-    for (var i = 0; i < formNames.length; i++) { 
-      msg[formNames[i]] = document.getElementById(formNames[i]).value;
-    }
-    console.log(JSON.stringify(msg));
-    $.post( "/submitted", {
-      javascript_data: JSON.stringify(msg)
-    })
-    //}, function(msg){console.log(msg);})
-    .fail(function(e) {
-      console.log(e);
-      //alert( "sheet error" );
-      alert(e.responseText);
-    });
-    myClear()
-  }
-}
-
-function mkGuess(guess){
-  lkupClear();
-  var x = document.getElementById("address").value;
-  var y = x.split(" ",2);
-  if(isNaN(y[0])) var z = guess
-  else var z = y[0] + " " + guess;
-  document.getElementById("address").value = z;
-  myLookup();
-}
-
-
-function shutDown() {
-  $.post( "/shutDown",{
-    javascript_data: JSON.stringify('dummy')
-  });
- 
-}
 
 </script>
 

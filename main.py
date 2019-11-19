@@ -78,7 +78,7 @@ def submitted_form():
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     name = HumanName(formDat['firstName'])
-    #print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
+    print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
     formDat['firstName'] = name.first + ' ' + name.middle
     formDat['lastName'] = name.last
     #print formDat;

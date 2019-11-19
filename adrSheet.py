@@ -13,43 +13,58 @@ class adrSheet:
     self.creds = ServiceAccountCredentials.from_json_keyfile_name('gcCreds.json',self.scope) #file downloaded from google API console
     self.retries = 3
     self.sheetName = sheetName
-    #self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
     self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','Comment:':'comment','State Senator':'stateSen','State Representative':'stateRep','Route':'route'}
     self.sheetCols = []
     self.lastRow = 0
 
-    #for tries in range(self.retries):
-    #  try:
-    #    gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
-    #    self.wks = gc.open(sheetName).sheet1 #open the spreadsheet by name
-    #    self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
-    #    break
-    #  except:
-    #    print "Unexpected error:", sys.exc_info()[0]
-    #    print "message:", sys.exc_info()[0].message
-    #    print 'ERR: spreadsheet not found'
-    #else:
-    #  return None
-    #  #exit()
+  def addRow(self,formDat):
+    for tries in range(self.retries):  #may be idle so long that spreadsheet closes
+      try:
+        gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
+        self.wks = gc.open(self.sheetName).sheet1 #open the spreadsheet by name
+        self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
+        break
+      except:
+        logging.warning( 'ERR: reopen spreadsheet not found')
+    else:
+      logging.error( 'ERR: reopen spreadsheet retries fail')
+      return False, 'Spreadsheet not found - check spelling'
 
-    #self.lastRow = len(self.sheet) + 1
-    #row1 = self.wks.row_values(1)
-    #for row in row1:
-    #  try:
-    #    self.sheetCols.append(self.sheetMap[row])
-    #  except:
-    #    self.sheetCols.append(None)
-    #print 'dbg9',self.sheetCols
-        
+    self.lastRow = len(self.sheet) + 1
+    row1 = self.wks.row_values(1)
+    #put the internal column names in the same order as the official spreadsheet column names
+    for col in row1:
+      try:
+        self.sheetCols.append(self.sheetMap[col]) #found the official name in row1, append the internal name
+      except:
+        self.sheetCols.append(None) #blank column in row1 or no match for official name
 
-  def getAdr(self,rowNum):
+    values = []
+    for col in self.sheetCols: #go thru the internal names and add then to the row
+      if col == None:
+        values.append('') #blank or wrong name for this column
+      else:
+        values.append(formDat[col])
+
+    for tries in range(self.retries): #write the row info out to spreadsheet
+      try:
+        self.wks.append_row(values)
+        return [True,'ok']
+      except:
+        pass
+    else:
+      logging.error( 'ERR: spreadsheet update retires fail')
+      return False, 'Spreadsheet Server down - try again later'
+
+
+  def getAdr(self,rowNum): #not used
     if rowNum < 2 or rowNum > self.lastRow: #outside the bounds of the sheet
       return []
     else:
       row = self.sheet[rowNum - 2]
       return [row['Address:'],row['City:'],row['Zip:']]
 
-  def doLookup(self,rowNum):
+  def doLookup(self,rowNum): #not used
     row = self.sheet[rowNum - 2]
     if row['State Senator'] == '' or row['State Representative'] == '': #needs a lookup
       if row['State/Province:'] != 'Massachusetts': #check if address is legal
@@ -65,75 +80,3 @@ class adrSheet:
     else:
       return False
 
-  def chgLegis(self,rowNum,legis):
-    #if rowNum < 2 or rowNum > self.lastRow: #outside the bounds of the sheet
-    #  return False
-    #else:
-    try:
-      update = [self.wks.cell(rowNum,11)] #NOTE: - this worked in previous sheet
-      update.append(self.wks.cell(rowNum,12))
-      #update = [self.wks.cell(rowNum,9)]  #column I = Rep
-      #update.append(self.wks.cell(rowNum,10))  #column J = Sen
-      update[0].value = legis['Representative']
-      update[1].value = legis['Senator']
-      #print 'dbg2', update[0].value,update[1].value
-      self.wks.update_cells(update)
-      return True
-    except:
-      return False
-
-  def addRow(self,formDat):
-    print 'dbg7'
-    for tries in range(self.retries):  #may be idle so long that spreadsheet closes
-      try:
-        gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
-        self.wks = gc.open(self.sheetName).sheet1 #open the spreadsheet by name
-        self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
-        break
-      except:
-        logging.warning( 'ERR: reopen spreadsheet not found')
-    else:
-      logging.error( 'ERR: reopen spreadsheet retries fail')
-      return False, 'Spreadsheet not found - check spelling'
-
-    print 'dbg8'
-    self.lastRow = len(self.sheet) + 1
-    row1 = self.wks.row_values(1)
-    #put the internal column names in the same order as the official spreadsheet column names
-    for col in row1:
-      try:
-        self.sheetCols.append(self.sheetMap[col]) #found the official name in row1, append the internal name
-      except:
-        self.sheetCols.append(None) #blank column in row1 or no match for official name
-    print 'dbg9',self.sheetCols
-        
-
-    print 'dbg0',formDat
-    values = []
-    for col in self.sheetCols: #go thru the internal names and add then to the row
-      if col == None:
-        values.append('') #blank or wrong name for this column
-      else:
-        print 'dbg1',col,formDat[col] #official name in this column
-        values.append(formDat[col])
-
-    for tries in range(self.retries):
-      try:
-        self.wks.append_row(values)
-        print 'dbg2',values
-        return [True,'ok']
-      except:
-        pass
-    else:
-      logging.error( 'ERR: spreadsheet update retires fail')
-      return False, 'Spreadsheet Server down - try again later'
-
-
-  def addRow2(self,rowNum):
-    try:
-      values = ['Aaron Boxer','24 Adams St.','Arlington','MA','02474','978-821-9102','aboxer51@yahoo.com']
-      self.wks.append_row(values)
-      print 'dbg3'
-      return True
-    except:
-      return False

@@ -65,17 +65,6 @@ def lkupLeg(adr):
   zipcode =  mkZipVal(adr[2])
   url = 'https://malegislature.gov/Search/FindMyLegislator?Address=' + street + '&City=' + town +'&ZipCode=' + zipcode
 
-  #try:
-  #  result = urlfetch.fetch(url)
-  #  if result.status_code == 200:
-  #    #self.response.write(result.content)
-  #    return result.content
-  #  else:
-  #    #self.response.status_code = result.status_code
-  #    return result.status_code
-  #except urlfetch.Error:
-  #  logging.exception('Caught exception fetching url')
-
   try:
     response = requests.get(url, timeout=60.0)
     return response.content

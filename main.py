@@ -14,78 +14,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START app]
 import sys
 import logging
 import json
 import re
 from fuzzywuzzy import fuzz
-#import usaddress
-#import pyap
 from nameparser import HumanName
 from streetaddress import StreetAddressParser
 
-#from google.appengine.ext import ndb
-#from google.appengine.api import memcache
-
-
-# [START imports]
 from flask import Flask, render_template, request, jsonify
 from flask_api import status
 import lkupLib
 import adrSheet
-#print 'paths'
-#print '\n'.join(sys.path)
 
-# [END imports]
-
-# [START create_app]
 app = Flask(__name__)
-# [END create_app]
 
-# [START form]
-#@app.route('/form')
 @app.route('/')
 def form():
-
-    #global wks
-    #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
-    #print wks.getAdr(2)
-    #memcache.add(key="spreadSheet",value="acluCard",time=36000)
     return render_template('form.html')
-# [END form]
-
-@app.route('/gsOpen', methods=['POST']) #NOTE - not used but will be when client can specify spreadsheet
-def spreadSheet():
-    #global wks
-    #global formDat
-    jsdata = request.form['javascript_data']
-    formDat = json.loads(jsdata)
-    print 'dbg11', formDat
-    #memcache.set(key="spreadSheet", value=formDat['sheet'], time=36000)
-    #spreadSheet = memcache.get("spreadSheet")
-    print 'dbg12', spreadSheet
-    #wks = adrSheet.adrSheet('acluCard') #exits if spreadsheet not found
-    wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
-    return jsdata
-
 
 # Runs when the submit button puts the client data into the spreadsheet
 @app.route('/submitted', methods=['POST'])
 def submitted_form():
-    #global formDat
-    #global wks
     jsdata = request.form['javascript_data']
     formDat = json.loads(jsdata)
     name = HumanName(formDat['firstName'])
-    print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
+    #print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
     formDat['firstName'] = name.first + ' ' + name.middle
     formDat['lastName'] = name.last
-    #print formDat;
     addr_parser = StreetAddressParser()
     tmp = addr_parser.parse(formDat['address'])
-    #if tmp['house'] and tmp['street_full']:
-    #  formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
 
     if tmp['house'] and tmp['street_full']:
       formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
@@ -101,61 +59,33 @@ def submitted_form():
       except:
         pass
 
-    #print 'dbg4 adr', formDat['address'], 'suite ', formDat['suite']
-    #print 'dbg5 tmp', tmp
-
-
-    #spreadSheet = memcache.get("spreadSheet")
+    #send the data to spreadsheet
     spreadSheet = formDat['sheet']
     wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
-    print 'dbg12'
+    #print 'dbg12'
     formDat.pop('sheet', None)
     status,msg = wks.addRow(formDat)
     if status == False:
-      print 'dbg14',status,msg
-      #return  status.HTTP_404_NOT_FOUND
-      #return json.dumps('spreadshee spelling error'),404
+      #print 'dbg14',status,msg
       return json.dumps(msg),404
-    #return render_template('form.html')
     return jsdata
 
-@app.route('/postmethod', methods = ['POST'])
-def get_post_javascript_data():
-    #global formDat
-    jsdata = request.form['javascript_data']
-    #formDat = json.loads(jsdata)
-    tmp = json.loads(jsdata)
-    #memcache.add(key="formDat",value=tmp,time=7200)
-    return jsdata
-
+#lookup the address in malegislature.gov
 @app.route('/getpythondata')
 def get_python_data():
-    #print 'dbg3',request.args.get('sheet'),request.args.get('zipcode')
-    #global formDat
-    #formDat = memcache.get("formDat")
-    #print 'dbg0',formDat
-    #memcache.delete("formDat")
-
     addr_parser = StreetAddressParser()
-    #tmp = addr_parser.parse(formDat['address'])
     tmp = addr_parser.parse(request.args.get('address'))
-    print 'dbg1',tmp
+    #print 'dbg1',tmp
 
-    if tmp['house'] and tmp['street_full']:
-      #formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
+    if tmp['house'] and tmp['street_full']: #create a full address for legislature lookup
       fullAdr = ' '.join([tmp['house'],tmp['street_full']])
     elif tmp['street_full']:
-      #formDat['address'] = tmp['street_full']
       fullAdr = tmp['street_full']
     else:
-      #formDat['address'] = ''
       fullAdr = ''
 
-
-    #adr = [formDat['address'],formDat['town'],formDat['zipcode']]
-    #return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
     adr = [fullAdr,request.args.get('city'),request.args.get('zipcode')]
-    print 'dbg2',adr
+    #print 'dbg2',adr
     for tries in range(5):
       response = lkupLib.lkupLeg(adr) #returns none if retries fail
       if response != None: #got something from website, scrape it and return
@@ -163,11 +93,9 @@ def get_python_data():
         if len(senRep) > 1: #lookup worked, calculate route code
           senRep['route'] = lkupLib.mkRoute(senRep)
         else: #lookup failed. return list of guesses
-          #senRep['guesses'] = mkGuess(formDat['zipcode'],formDat['address'])
-          print 'dbg3',request.args.get('zipcode'),tmp['street_full']
+          #print 'dbg3',request.args.get('zipcode'),tmp['street_full']
           senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])
         return json.dumps(senRep)
-    #return None
     return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
 
 def getMin(best):
@@ -195,7 +123,6 @@ def mkGuess(zipcode,address):
   except:
     return [best[0][1],best[1][1],best[2][1],best[3][1],best[4][1]]
   tmp = address.split(' ',2)
-  #if re.search(r'\d', tmp[0]): 
   if re.search(r'\d', tmp[0]) and len(tmp) > 1: 
     adr = tmp[1]
   else:
@@ -203,31 +130,34 @@ def mkGuess(zipcode,address):
 
   for street in streets:
     Ratio = fuzz.ratio(adr.lower(),street.lower())
-    #print Ratio, street
     minIdx = getMin(best)
     if Ratio > best[minIdx][0]:
       best[minIdx] = (Ratio,street)
 
   best.sort(key=score,reverse=True)
-  #return ['guessa','guessb','guessc','guessd','guesse']
   return [best[0][1],best[1][1],best[2][1],best[3][1],best[4][1]]
 
 @app.route('/shutDown', methods=['POST'])
 def shutDown():
-  #memcache.delete("spreadSheet")
-  #memcache.delete("formDat")
   jsdata = request.form['javascript_data']
   return jsdata 
-# [END form]
 
 
 @app.errorhandler(500)
 def server_error(e):
     #print 'dbg13',e
-    # Log the error and stacktrace.
-    #memcache.delete("formDat")
-    #memcache.delete("spreadSheet")
     #logging.exception('ERR request %s',e)
     return 'An internal error occurred.', 500
-# [END app]
 
+@app.route('/postmethod', methods = ['POST']) #not used
+def get_post_javascript_data():
+    jsdata = request.form['javascript_data']
+    tmp = json.loads(jsdata)
+    return jsdata
+
+@app.route('/gsOpen', methods=['POST']) #NOTE - not used but will be when client can specify spreadsheet
+def spreadSheet():
+    jsdata = request.form['javascript_data']
+    formDat = json.loads(jsdata)
+    wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
+    return jsdata

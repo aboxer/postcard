@@ -16,28 +16,30 @@ class adrSheet:
     #self.sheetMap = {'firstName':'First Name:','lastName':'Last Name:','address':'Address:','suite':'Address Line 2:','city':'City:','state':'State/Province:','zipcode':'Zip:','phone':'Phone Number:','email':'E-mail:','stateSen':'State Senator','stateRep':'State Representative'}
     self.sheetMap = {'First Name:':'firstName','Last Name:':'lastName','Address:':'address','Address Line 2:':'suite','City:':'city','State/Province:':'state','Zip:':'zipcode','Phone Number:':'phone','E-mail:':'email','comment:':'comment','State Senator':'stateSen','State Representative':'stateRep','Route':'route'}
     self.sheetCols = []
+    self.lastRow = 0
 
-    for tries in range(self.retries):
-      try:
-        gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
-        self.wks = gc.open(sheetName).sheet1 #open the spreadsheet by name
-        self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
-        break
-      except:
-        print "Unexpected error:", sys.exc_info()[0]
-        print "message:", sys.exc_info()[0].message
-        print 'ERR: spreadsheet not found'
-    else:
-      exit()
+    #for tries in range(self.retries):
+    #  try:
+    #    gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
+    #    self.wks = gc.open(sheetName).sheet1 #open the spreadsheet by name
+    #    self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
+    #    break
+    #  except:
+    #    print "Unexpected error:", sys.exc_info()[0]
+    #    print "message:", sys.exc_info()[0].message
+    #    print 'ERR: spreadsheet not found'
+    #else:
+    #  return None
+    #  #exit()
 
-    self.lastRow = len(self.sheet) + 1
-    row1 = self.wks.row_values(1)
-    for row in row1:
-      try:
-        self.sheetCols.append(self.sheetMap[row])
-      except:
-        self.sheetCols.append(None)
-    print 'dbg9',self.sheetCols
+    #self.lastRow = len(self.sheet) + 1
+    #row1 = self.wks.row_values(1)
+    #for row in row1:
+    #  try:
+    #    self.sheetCols.append(self.sheetMap[row])
+    #  except:
+    #    self.sheetCols.append(None)
+    #print 'dbg9',self.sheetCols
         
 
   def getAdr(self,rowNum):
@@ -81,16 +83,29 @@ class adrSheet:
       return False
 
   def addRow(self,formDat):
+    print 'dbg7'
     for tries in range(self.retries):  #may be idle so long that spreadsheet closes
       try:
         gc = gspread.authorize(self.creds) #authorize access to the spreadsheet
         self.wks = gc.open(self.sheetName).sheet1 #open the spreadsheet by name
+        self.sheet = self.wks.get_all_records() #get all the records into a list. each record is a dictionary with row 1 as keys.
         break
       except:
         logging.warning( 'ERR: reopen spreadsheet not found')
     else:
       logging.error( 'ERR: reopen spreadsheet retries fail')
-      exit()
+      return False, 'Spreadsheet not found - check spelling'
+
+    print 'dbg8'
+    self.lastRow = len(self.sheet) + 1
+    row1 = self.wks.row_values(1)
+    for row in row1:
+      try:
+        self.sheetCols.append(self.sheetMap[row])
+      except:
+        self.sheetCols.append(None)
+    print 'dbg9',self.sheetCols
+        
 
     print 'dbg0',formDat
     values = []
@@ -103,12 +118,12 @@ class adrSheet:
       try:
         self.wks.append_row(values)
         print 'dbg2',values
-        return True
+        return [True,'ok']
       except:
         pass
     else:
       logging.error( 'ERR: spreadsheet update retires fail')
-      return False
+      return False, 'Spreadsheet Server down - try again later'
 
 
   def addRow2(self,rowNum):

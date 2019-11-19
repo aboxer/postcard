@@ -30,7 +30,8 @@ from streetaddress import StreetAddressParser
 
 
 # [START imports]
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+from flask_api import status
 import lkupLib
 import adrSheet
 #print 'paths'
@@ -107,8 +108,14 @@ def submitted_form():
     #spreadSheet = memcache.get("spreadSheet")
     spreadSheet = formDat['sheet']
     wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
+    print 'dbg12'
     formDat.pop('sheet', None)
-    wks.addRow(formDat)
+    status,msg = wks.addRow(formDat)
+    if status == False:
+      print 'dbg14',status,msg
+      #return  status.HTTP_404_NOT_FOUND
+      #return json.dumps('spreadshee spelling error'),404
+      return json.dumps(msg),404
     #return render_template('form.html')
     return jsdata
 
@@ -146,6 +153,7 @@ def get_python_data():
 
 
     #adr = [formDat['address'],formDat['town'],formDat['zipcode']]
+    #return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
     adr = [fullAdr,request.args.get('city'),request.args.get('zipcode')]
     print 'dbg2',adr
     for tries in range(5):
@@ -159,7 +167,8 @@ def get_python_data():
           print 'dbg3',request.args.get('zipcode'),tmp['street_full']
           senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])
         return json.dumps(senRep)
-    return None
+    #return None
+    return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
 
 def getMin(best):
   minIdx = 0
@@ -214,10 +223,11 @@ def shutDown():
 
 @app.errorhandler(500)
 def server_error(e):
+    #print 'dbg13',e
     # Log the error and stacktrace.
     #memcache.delete("formDat")
     #memcache.delete("spreadSheet")
-    logging.exception('ERR request %s',e)
+    #logging.exception('ERR request %s',e)
     return 'An internal error occurred.', 500
 # [END app]
 

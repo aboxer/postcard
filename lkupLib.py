@@ -2,7 +2,7 @@ import requests
 import re
 import lxml
 from bs4 import BeautifulSoup
-from google.appengine.api import urlfetch
+#from google.appengine.api import urlfetch
 import logging
 
 #compare two texts that may be different encodings
@@ -54,7 +54,8 @@ def mkAdrVal(adr):
   return space2Plus(field)
 
 def mkZipVal(zipcode):
-  if isinstance(zipcode,basestring) == True: #its a string so it is probably a 9 digit zip code with a dash
+  #if isinstance(zipcode,basestring) == True: #its a string so it is probably a 9 digit zip code with a dash
+  if isinstance(zipcode,str) == True: #its a string so it is probably a 9 digit zip code with a dash
     return zipcode[:5]
   else: #ints an integer so it is probably a valid 5 digit zipcode
     return str(zipcode).zfill(5)
@@ -66,7 +67,8 @@ def lkupLeg(adr):
   url = 'https://malegislature.gov/Search/FindMyLegislator?Address=' + street + '&City=' + town +'&ZipCode=' + zipcode
 
   try:
-    response = requests.get(url, timeout=60.0)
+    #response = requests.get(url, timeout=60.0)
+    response = requests.get(url, timeout=60.0, verify=False)
     return response.content
   except:
     logging.exception('Error fetching url')

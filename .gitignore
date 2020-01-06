@@ -3,6 +3,8 @@ S generated files #
 .DS_Store
 sandbox/*
 docxs/*
+env/*
+lib/*
 *.*~
 *.dbg
 *.pyc

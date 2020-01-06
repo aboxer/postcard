@@ -3,9 +3,9 @@ import logging
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 import sys
-from requests_toolbelt.adapters import appengine
+#from requests_toolbelt.adapters import appengine
 
-appengine.monkeypatch()
+#appengine.monkeypatch()
 
 class adrSheet:
   def __init__(self,sheetName):

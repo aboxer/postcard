@@ -55,7 +55,7 @@ def mkAdrVal(adr):
 
 def mkZipVal(zipcode):
   #if isinstance(zipcode,basestring) == True: #its a string so it is probably a 9 digit zip code with a dash
-  if isinstance(zipcode,str) == True: #its a string so it is probably a 9 digit zip code with a dash
+  if isinstance(zipcode,str) == True: #its a string so it is probably a 9 digit zip code with a dash - needed for python3
     return zipcode[:5]
   else: #ints an integer so it is probably a valid 5 digit zipcode
     return str(zipcode).zfill(5)
@@ -101,14 +101,11 @@ def mkRoute(senRep):
   tmp = senRep['Senator'].split()
   for senRoom in senRooms:
     if eqText(tmp[0][:-1],senRoom[0]) and eqText(tmp[1],senRoom[1]): #chop the comma off the end of last name
-      #tmp2 = senRoom[2]
       tmp1 = tmp[1][0] + tmp[0][0:2] + senRoom[2] #FirstinitLastinitRoom
       break
-  #tmp2 = tmp2 + '/'
   tmp = senRep['Representative'].split()
   for repRoom in repRooms:
     if eqText(tmp[0][:-1],repRoom[0]) and eqText(tmp[1],repRoom[1]): #chop the comma off the end of last name
-      #tmp2 = tmp2 + repRoom[2]
       tmp2 = tmp[1][0] + tmp[0][0:2] + repRoom[2] #FirstinitLastinitRoom
       break
   return tmp2,tmp1

@@ -91,7 +91,9 @@ def get_python_data():
       if response != None: #got something from website, scrape it and return
         senRep = lkupLib.legScrape(response)
         if len(senRep) > 1: #lookup worked, calculate route code
-          senRep['route'] = lkupLib.mkRoute(senRep)
+          #senRep['route'] = lkupLib.mkRoute(senRep)
+          #senRep['route2'] = senRep['route']
+          senRep['route'],senRep['route2'] = lkupLib.mkRoute(senRep)
         else: #lookup failed. return list of guesses
           #print 'dbg3',request.args.get('zipcode'),tmp['street_full']
           senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])

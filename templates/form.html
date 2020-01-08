@@ -43,14 +43,15 @@
           <textarea class="commentbox" autocomplete="off" id="comment" rows = "5" cols = "69" maxlength="300" name = "comment" placeholder="340 char max"></textarea>
           <br />
           <br />
-          <label for="stateSen">stateSen</label> 
-          <input autocomplete="off" id="stateSen"  type="text" name="stateSen" size="30">
           <label for="stateRep">stateRep</label>
-          <input autocomplete="off" id="stateRep"  type="text" name="stateRep" size="30"><br /> 
-          <label class="biglabel" for="route">route</label>
-          <input style="margin-left: 4px" autocomplete="off" id="route" type="text" name="route" class="bigtext">
+          <input style="margin-left: 8px" autocomplete="off" id="stateRep"  type="text" name="stateRep" size="32px">
+          <label for="stateSen">stateSen</label> 
+          <input autocomplete="off" id="stateSen"  type="text" name="stateSen" size="32"><br /> 
+          <label class="biglabel" for="route">routes</label>
+          <input style="margin-left: 5px" autocomplete="off" id="route" type="text" name="route" class="bigtext">
+          <input style="margin-left: 58px" autocomplete="off" id="route2" type="text" name="route2" class="bigtext"><br />
 
-          <button class="button " onclick="mySubmit()">Submit</button>
+          <button style="margin-left: 70px" class="button " onclick="mySubmit()">Submit</button>
           <button class="button  button1" onclick="myClear()">Clear</button>
         </div>
         <div class="column">
@@ -80,7 +81,7 @@
           <li>Non-MA or invalid zipcodes will NOT autofill state or city/town</li>
           <li>PO boxes, business addresses and invalid MA addresses will not autofill senator and representative </li>
           <li>Discontinued zipcodes may autofill with old names. Changing to correct names will change to new zipcode</li>
-          <li>The format of route is "senator_room/representative_room"</li>
+          <li>The route for each legislator is below the name in the format "InitialsRoomNo"</li>
           <li>To get route without resubmitting, reenter required fields, wait for autofill and hit "Clear"</li>
         </ul> 
       </div>
@@ -97,7 +98,7 @@ in the spreadsheet will be added. The rest will be discarded.
 */
 
 //ids for all the text input boxes in the form
-var formNames = ['zipcode','state','city','address','firstName','email','phone','comment','stateSen','stateRep','route','guess1','guess2','guess3','guess4','guess5'];
+var formNames = ['zipcode','state','city','address','firstName','email','phone','comment','stateSen','stateRep','route','route2','guess1','guess2','guess3','guess4','guess5'];
 
 //just used to move focus to correct text box
 function mvFocus(next){
@@ -158,6 +159,7 @@ function senrepLkup() {
       var w = $.parseJSON(data);
       if("route" in w){  //got a match
         document.getElementById("route").value = w["route"];
+        document.getElementById("route2").value = w["route2"];
         document.getElementById("stateSen").value = w["Senator"];
         document.getElementById("stateRep").value = w["Representative"];
         document.getElementById("guess1").value = "";
@@ -168,6 +170,7 @@ function senrepLkup() {
       }
       else {  //no match - show the guesses
         document.getElementById("route").value = "Unknown";
+        document.getElementById("route2").value = "Unknown";
         document.getElementById("stateSen").value = "";
         document.getElementById("stateRep").value = "";
         document.getElementById("guess1").value = w["guesses"][0];
@@ -187,6 +190,7 @@ function senrepLkup() {
 //just clear sen & rep data
 function lkupClear(){
   document.getElementById("route").value = "";
+  document.getElementById("route2").value = "";
   document.getElementById("stateSen").value = "";
   document.getElementById("stateRep").value = "";
 }

@@ -1,0 +1,48 @@
+cases
+1] oldzip subsumed in existing newzip - delete oldzip table entry
+2] oldzip replaced with unused newzip - just replace oldzip in entry with newzip , get new zips from melissa
+3] oldzip replaced with multiple zips - delete old zip, add unused newzips, get new zips from melissa
+
+Notes
+=====
+1) zip2adr has an address_xxxxx.json for every oldzip and it contains a short error message
+2) zip2adr already has an adr_xxxxx.json file for every newzip below
+3) none of the oldzips appear in streetDB.json
+
+
+oldzip   city      newzips
+=====================================================================
+[[1133, u'Springfield', 01089, 01103, 01104, 01105, 01115, 01144],
+[1195, u'Springfield', 01089, 01103, 01104, 01105, 01115, 01144],
+[1470, u'Groton', none],
+[1477, u'Winchendon Springs', 01475],
+[1517, u'East Princeton', 01541],
+[1580, u'Westborough', 01581],
+[1582, u'Westborough', 01581],
+[1654, u'Worcester', 01608, 01615],
+[1806, u'Woburn', 01801],
+[1807, u'Woburn', 01801, 01813],
+[1808, u'Woburn', 01801],
+[2031, u'East Mansfield', 02048],
+[2207, u'Boston', 02108, 02109, 02110, 02111, 02201, 02203, 02210],
+[2216, u'Boston', 02108, 02109, 02110, 02111, 02113, 02114, 02201, 02203, 02222],
+[2228, u'East Boston', 02128],
+[2239, u'Cambridge', 02138],
+[2295, u'Boston', 02116],
+[2340, u'Hanover', 02339],
+[2565, u'Silver Beach', 01966],
+[2573, u'West Chop', 02568],
+[2636, u'Centerville', 02632],
+[2783, u'Taunton', 02780],
+[5544, u'Andover', 01899]]
+
+1) zip2town database has an entry for every oldzip and newzip but zip2street does not. So if an oldzip senRep lookup fails there is no street guess.
+  valid: 54 Champney St. Groton 01450  - 405/237, lookup success
+  oldzip: 54 Champney St. Groton 01470  - 405/237, lookup success
+  badstreet: 54 Chantney St. Groton 01450  - unknown, guess success
+  badboth: 54 Chantney St. Groton 01470  - unknown, guess fail
+
+2) zip2town has old name for oldzip - Typing in 
+  valid: 218 Lake St. Vineyard Haven 02568  309/472, lookup success
+  valid: 218 Late St. Vineyard Haven 02568  unknown, guess success
+  oldzip: 218 Lake St. West Chop 02573  unknown, guess fail

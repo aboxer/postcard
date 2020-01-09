@@ -1,0 +1,79 @@
+Michael	Barrett	Third Middlesex	Democrat	109-D	(617) 722-1572	Mike.Barrett@masenate.gov
+ Joseph , Boncore
+Joseph	Boncore	First Suffolk and Middlesex	Democrat	112	(617) 722-1634	Joseph.Boncore@masenate.gov
+ Michael , Brady
+Michael	Brady	Second Plymouth and Bristol	Democrat	416-A	(617) 722-1200	Michael.Brady@masenate.gov
+ William , Brownsberger
+William	Brownsberger	Second Suffolk and Middlesex	Democrat	319	(617) 722-1280	William.Brownsberger@masenate.gov
+ Harriette , Chandler
+Harriette	Chandler	First Worcester	Democrat	333	(617) 722-1544	Harriette.Chandler@masenate.gov
+ Sonia , Chang-Diaz
+Sonia	Chang-Diaz	Second Suffolk	Democrat	111	(617) 722-1673	Sonia.Chang-Diaz@masenate.gov
+ Nick , Collins
+Nick	Collins	First Suffolk	Democrat	312-D	(617) 722-1150	Nick.Collins@masenate.gov
+ Joanne , Comerford
+Joanne	Comerford	Hampshire, Franklin and Worcester	Democrat	70C	(617) 722-1532	Jo.Comerford@masenate.gov
+ Cynthia , Creem
+Cynthia	Creem	First Middlesex and Norfolk	Democrat	312-A	(617) 722-1639	Cynthia.Creem@masenate.gov
+ Brendan , Crighton
+Brendan	Crighton	Third Essex	Democrat	520	(617) 722-1350	brendan.crighton@masenate.gov
+ Julian , Cyr
+Julian	Cyr	Cape and Islands	Democrat	309	(617) 722-1570	julian.cyr@masenate.gov
+ Viriato , deMacedo
+Viriato	deMacedo	Plymouth and Barnstable	Republican	313-C	(617) 722-1330	Vinny.deMacedo@masenate.gov
+ Sal , DiDomenico
+Sal	DiDomenico	Middlesex and Suffolk	Democrat	208	(617) 722-1650	Sal.DiDomenico@masenate.gov
+ Diana , DiZoglio
+Diana	DiZoglio	First Essex	Democrat	416-B	(617) 722-1604	Diana.DiZoglio@masenate.gov
+ James , Eldridge
+James	Eldridge	Middlesex and Worcester	Democrat	511-C	(617) 722-1120	James.Eldridge@masenate.gov
+ Ryan , Fattman
+Ryan	Fattman	Worcester and Norfolk	Republican	213-A	(617) 722-1420	Ryan.Fattman@masenate.gov
+ Paul , Feeney
+Paul	Feeney	Bristol and Norfolk	Democrat	215	(617) 722-1222	paul.feeney@masenate.gov
+ Barry , Finegold
+Barry	Finegold	Second Essex and Middlesex	Democrat	507	(617) 722-1612	Barry.Finegold@masenate.gov
+ Cindy , Friedman
+Cindy	Friedman	Fourth Middlesex	Democrat	413-D	(617) 722-1432	Cindy.Friedman@masenate.gov
+ Anne , Gobi
+Anne	Gobi	Worcester, Hampden, Hampshire and Middlesex	Democrat	513	(617) 722-1540	anne.gobi@masenate.gov
+ Adam , Hinds
+Adam	Hinds	Berkshire, Hampshire, Franklin and Hampden	Democrat	109-E	(617) 722-1625	adam.hinds@masenate.gov
+ Donald , Humason
+Donald	Humason	Second Hampden and Hampshire	Republican	313-A	(617) 722-1415	Donald.Humason@masenate.gov
+ Patricia , Jehlen
+Patricia	Jehlen	Second Middlesex	Democrat	424	(617) 722-1578	Patricia.Jehlen@masenate.gov
+ John , Keenan
+John	Keenan	Norfolk and Plymouth	Democrat	413-F	(617) 722-1494	John.Keenan@masenate.gov
+ Edward , Kennedy
+Edward	Kennedy	First Middlesex	Democrat	405	(617) 722-1630	edward.kennedy@masenate.gov
+ Eric , Lesser
+Eric	Lesser	First Hampden and Hampshire	Democrat	413-C	(617) 722-1291	eric.lesser@masenate.gov
+ Jason , Lewis
+Jason	Lewis	Fifth Middlesex	Democrat	511-B	(617) 722-1206	Jason.Lewis@masenate.gov
+ Joan , Lovely
+Joan	Lovely	Second Essex	Democrat	413-A	(617) 722-1410	Joan.Lovely@masenate.gov
+ Mark , Montigny
+Mark	Montigny	Second Bristol and Plymouth	Democrat	312-C	(617) 722-1440	Mark.Montigny@masenate.gov
+ Michael , Moore
+Michael	Moore	Second Worcester	Democrat	109-B	(617) 722-1485	Michael.Moore@masenate.gov
+ Patrick , O'Connor
+Patrick	O'Connor	Plymouth and Norfolk	Republican	419	(617) 722-1646	Patrick.OConnor@masenate.gov
+ Marc , Pacheco
+Marc	Pacheco	First Plymouth and Bristol	Democrat	312-B	(617) 722-1551	Marc.Pacheco@masenate.gov
+ Rebecca , Rausch
+Rebecca	Rausch	Norfolk, Bristol and Middlesex	Democrat	218	(617) 722-1555	Becca.Rausch@masenate.gov
+ Michael , Rodrigues
+Michael	Rodrigues	First Bristol and Plymouth	Democrat	212	(617) 722-1114	Michael.Rodrigues@masenate.gov
+ Michael , Rush
+Michael	Rush	Norfolk and Suffolk	Democrat	109-C	(617) 722-1348	Mike.Rush@masenate.gov
+ Karen , Spilka
+Karen	Spilka	Second Middlesex and Norfolk	Democrat	332	(617) 722-1500	Karen.Spilka@masenate.gov
+ Bruce , Tarr
+Bruce	Tarr	First Essex and Middlesex	Republican	308	(617) 722-1600	Bruce.Tarr@masenate.gov
+ Walter , Timilty
+Walter	Timilty	Norfolk, Bristol and Plymouth	Democrat	213-B	(617) 722-1643	Walter.Timilty@masenate.gov
+ Dean , Tran
+Dean	Tran	Worcester and Middlesex	Republican	504	(617) 722-1230	dean.tran@masenate.gov
+ James , Welch
+James	Welch	Hampden	Democrat	413-B	(617) 722-1660	James.Welch@masenate.gov

@@ -103,9 +103,14 @@ def mkRoute(senRep):
     if eqText(tmp[0][:-1],senRoom[0]) and eqText(tmp[1],senRoom[1]): #chop the comma off the end of last name
       tmp1 = tmp[1][0] + tmp[0][0:2] + senRoom[2] #FirstinitLastinitRoom
       break
+  else:
+    tmp1 = 'unknown'
+
   tmp = senRep['Representative'].split()
   for repRoom in repRooms:
     if eqText(tmp[0][:-1],repRoom[0]) and eqText(tmp[1],repRoom[1]): #chop the comma off the end of last name
       tmp2 = tmp[1][0] + tmp[0][0:2] + repRoom[2] #FirstinitLastinitRoom
       break
+  else:
+    tmp2 = 'unknown'
   return tmp2,tmp1

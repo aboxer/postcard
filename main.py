@@ -20,7 +20,8 @@ import json
 import re
 from fuzzywuzzy import fuzz
 from nameparser import HumanName
-from streetaddress import StreetAddressParser
+#from streetaddress import StreetAddressParser
+from mystreetaddress import StreetAddressParser
 
 from flask import Flask, render_template, request, jsonify
 from flask_api import status

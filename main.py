@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Copyright 2016 Google Inc.
@@ -21,12 +22,29 @@ import re
 from fuzzywuzzy import fuzz
 from nameparser import HumanName
 #from streetaddress import StreetAddressParser
-from mystreetaddress import StreetAddressParser
+#from mystreetaddress import StreetAddressParser
 
 from flask import Flask, render_template, request, jsonify
 from flask_api import status
-import lkupLib
-import adrSheet
+#import lkupLib
+#import adrSheet
+
+#import statsLib as stats
+#import m_nlpAI as model
+import c_nlpAI as ctl
+#import v_nlpAI as view
+import m_nlpAI as model
+
+#m = model.model('rfa150.json',150) #infile json
+
+#v = view.view()
+#m = model.model(sys.argv[1],aiSz) #infile json
+m = model.model('rfa150.json',100) #infile json
+#c = ctl.ctl(v,m)
+c = ctl.ctl(0,m)
+c.run(c)
+#if outfile != None: #save the results 
+#  m.fileSv(outfi
 
 app = Flask(__name__)
 
@@ -43,8 +61,9 @@ def submitted_form():
     #print 'dbg3 first ', name.first,'mid ',name.middle,'last ',name.last;
     formDat['firstName'] = name.first + ' ' + name.middle
     formDat['lastName'] = name.last
-    addr_parser = StreetAddressParser()
-    tmp = addr_parser.parse(formDat['address'])
+    #addr_parser = StreetAddressParser()
+    #tmp = addr_parser.parse(formDat['address'])
+    tmp = None
 
     if tmp['house'] and tmp['street_full']:
       formDat['address'] = ' '.join([tmp['house'],tmp['street_full']])
@@ -62,8 +81,9 @@ def submitted_form():
 
     #send the data to spreadsheet
     spreadSheet = formDat['sheet']
-    wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
+    #wks = adrSheet.adrSheet(spreadSheet) #exits if spreadsheet not found
     #print 'dbg12'
+    wks = None
     formDat.pop('sheet', None)
     status,msg = wks.addRow(formDat)
     if status == False:
@@ -74,30 +94,43 @@ def submitted_form():
 #lookup the address in malegislature.gov
 @app.route('/getpythondata')
 def get_python_data():
-    addr_parser = StreetAddressParser()
-    tmp = addr_parser.parse(request.args.get('address'))
+    global c
+    #addr_parser = StreetAddressParser()
+    #tmp = addr_parser.parse(request.args.get('address'))
+    tmp = request.args.get('address')
     #print 'dbg1',tmp
 
-    if tmp['house'] and tmp['street_full']: #create a full address for legislature lookup
-      fullAdr = ' '.join([tmp['house'],tmp['street_full']])
-    elif tmp['street_full']:
-      fullAdr = tmp['street_full']
-    else:
-      fullAdr = ''
+    #if tmp['house'] and tmp['street_full']: #create a full address for legislature lookup
+    #  fullAdr = ' '.join([tmp['house'],tmp['street_full']])
+    #elif tmp['street_full']:
+    #  fullAdr = tmp['street_full']
+    #else:
+    #  fullAdr = ''
 
-    adr = [fullAdr,request.args.get('city'),request.args.get('zipcode')]
+    #aiConf = '{:6.2f}'.format(stats.samConf(int(trainGoal),float(errMargin)/100.0,0.5,self.m.mailCt)*100)
+    #aiConf = '{:6.2f}'.format(stats.samConf(int(tmp),0.05,0.5,5000))
+    aiConf = c.trainConf(int(tmp),5)
+
+  
+    #adr = [fullAdr,request.args.get('city'),request.args.get('zipcode')]
     #print 'dbg2',adr
-    for tries in range(5):
-      response = lkupLib.lkupLeg(adr) #returns none if retries fail
-      if response != None: #got something from website, scrape it and return
-        senRep = lkupLib.legScrape(response)
-        if len(senRep) > 1: #lookup worked, calculate route code
-          senRep['route'],senRep['route2'] = lkupLib.mkRoute(senRep)
-        else: #lookup failed. return list of guesses
-          #print 'dbg3',request.args.get('zipcode'),tmp['street_full']
-          senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])
-        return json.dumps(senRep)
-    return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
+    senRep = {}
+    senRep['route'] = 'hello'
+    senRep['route2'] = 'world'
+    senRep['Senator'] = 'me'
+    senRep['Representative'] = aiConf
+    return json.dumps(senRep)
+    #for tries in range(5):
+    #  response = lkupLib.lkupLeg(adr) #returns none if retries fail
+    #  if response != None: #got something from website, scrape it and return
+    #    senRep = lkupLib.legScrape(response)
+    #    if len(senRep) > 1: #lookup worked, calculate route code
+    #      senRep['route'],senRep['route2'] = lkupLib.mkRoute(senRep)
+    #    else: #lookup failed. return list of guesses
+    #      #print 'dbg3',request.args.get('zipcode'),tmp['street_full']
+    #      senRep['guesses'] = mkGuess(request.args.get('zipcode'),tmp['street_full'])
+    #    return json.dumps(senRep)
+    #return 'MA Legislature Website Down - Hit Clear and try again later', status.HTTP_404_NOT_FOUND
 
 def getMin(best):
   minIdx = 0

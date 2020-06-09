@@ -154,6 +154,7 @@ function senrepLkup() {
   var x = document.getElementById("zipcode").value;
   var y = document.getElementById("city").value;
   var z = document.getElementById("address").value;
+  //var z = "clown";
   $.get("/getpythondata",{zipcode:x,city:y,address:z},
     function(data) {
       var w = $.parseJSON(data);
